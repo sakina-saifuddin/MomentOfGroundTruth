@@ -1,19 +1,23 @@
-# Moment of GroundTruth
+<h1 align="center">
+  <img src="docs/images/logo-banner.png" alt="Moment of GroundTruth: every pipeline incident has a moment of truth. We dig down to the ground truth, the root cause. PHMSA incident narratives, BiGRU, BiLSTM with attention, BERT." width="900">
+</h1>
 
-> Every pipeline incident has a moment of truth. We dig down to the ground truth: the root cause.
-
-**Name meaning:** “Moment of truth” is the instant something is decided, and “ground truth” is the machine learning term for the correct label. Here the correct label is the **CAUSE** of a gas pipeline incident, and pipelines are buried in the ground.
-
-[![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-models-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-app-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![License](https://img.shields.io/badge/License-not%20specified-lightgrey)](#license)
-
-![Illustration of a buried pipeline running through layers of earth, with a small marked sample point.](docs/images/bedrock-hero.svg)
+<p align="center">
+  <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.x-C8201C?logo=python&logoColor=white"></a>
+  <a href="https://pytorch.org/"><img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-models-C8201C?logo=pytorch&logoColor=white"></a>
+  <a href="https://streamlit.io/"><img alt="Streamlit" src="https://img.shields.io/badge/Streamlit-app%20planned-C8201C?logo=streamlit&logoColor=white"></a>
+  <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-not%20specified-555555"></a>
+</p>
 
 ## Chapter 0 — Header
 
+<img src="docs/images/logo-stamp-root-cause.png" alt="Red rubber-stamp logo reading Moment of GroundTruth, Root Cause Analysis." align="right" width="230">
+
+**Name meaning:** “Moment of truth” is the instant something is decided, and “ground truth” is the machine learning term for the correct label. Here the correct label is the **CAUSE** of a gas pipeline incident, and pipelines are buried in the ground. The logo is a rubber stamp because every report ends the same way: someone has to stamp a cause on it.
+
 This project reads the written account of a U.S. gas transmission or gathering pipeline incident and predicts its cause from eight categories. The work moves from public incident reports, through three text models, to a Streamlit app intended to return a predicted cause when someone pastes in a narrative.
+
+<br clear="right">
 
 ## Chapter 1 — Something underground goes wrong
 
@@ -191,6 +195,8 @@ flowchart LR
 
 ## Chapter 5 — The moment of truth: who digs deepest?
 
+<img src="docs/images/logo-stamp.png" alt="Red rubber-stamp logo reading Moment of GroundTruth." align="right" width="170">
+
 All three models are trained and scored on the same 458 held-out test narratives, under both class-imbalance strategies from the proposal: **Exp 1** (class-weighted loss on the original training set) and **Exp 2** (smart oversampling with validated synthetic narratives, no class weights). Every number below is read from the results files the three of us committed; nothing is estimated. The full write-up, with figures, is in [`reports/final_comparison.md`](reports/final_comparison.md), and `python evaluation/compare_models.py` regenerates it.
 
 The frozen BERT model was run with two pooling methods, so it appears twice in the summary: **mean pooling** (the average of all token vectors, the main BERT result) and **`pooler_output`** (the `[CLS]` vector through BERT's pooler layer, the original PRD design).
@@ -295,7 +301,7 @@ The repository holds the shared data pipeline, all three models, and the combine
 |-- parva/                   BiGRU + FastText code and results
 |-- muhammad/                BiLSTM + attention + FastText code and results
 |-- sakina/                  frozen BERT code, results/ (pooler_output), results_mean_pooling/
-`-- docs/images/             README images
+`-- docs/                    logo PDF; images/ holds the logo and README images
 ```
 
 The GitHub repository is [`sakina-saifuddin/MomentOfGroundTruth`](https://github.com/sakina-saifuddin/MomentOfGroundTruth):
@@ -362,7 +368,8 @@ See [docs/images/CREDITS.md](docs/images/CREDITS.md) for full attribution and re
 | `gas-pipeline-construction.jpg` | Five excavators lowering pipeline into trench | Peter Facey | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) | [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Five_excavators_lowering_pipeline_into_trench_-_geograph.org.uk_-_7218071.jpg) |
 | `gas-pipeline-river-crossing.jpg` | Gas Pipeline Roman River | Bob1960evens | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Gas_Pipeline_Roman_River.jpg) |
 | `dilkon-compressor-station.jpg` | Dilkon Compressor Station, February 2019 | Steven Baltakatei Sandoval | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Dilkon_Compressor_Station,_February_2019.jpg) |
-| `bedrock-hero.svg` | Original project illustration | Moment-of-GroundTruth project | No separate license; repository license not specified | Created for this README |
+| `logo-banner.png`, `logo-stamp.png`, `logo-stamp-root-cause.png` | Moment of GroundTruth logo (rubber-stamp mark and banner), cropped and resized from `docs/Moment of GroundTruth Logo.pdf` | Supplied by the project team | No separate license; repository license not specified | Uploaded to the repository as `docs/Moment of GroundTruth Logo.pdf` |
+| `bedrock-hero.svg` | Earlier README header illustration, no longer used in the README | Moment-of-GroundTruth project | No separate license; repository license not specified | Created for the earlier README |
 | `chart-cause-counts.png` | Cause counts | Moment-of-GroundTruth project, generated from PHMSA CSV | No separate license; repository license not specified | Generated by `scripts/generate_readme_charts.py` |
 | `chart-incidents-by-year.png` | Incident counts by year | Moment-of-GroundTruth project, generated from PHMSA CSV | No separate license; repository license not specified | Generated by `scripts/generate_readme_charts.py` |
 | `chart-narrative-lengths.png` | Narrative word-count distribution | Moment-of-GroundTruth project, generated from PHMSA CSV | No separate license; repository license not specified | Generated by `scripts/generate_readme_charts.py` |
@@ -379,4 +386,5 @@ No repository license file is present. The project’s source-code license is th
 
 - The original short project description is expanded into the story and model chapters above; its core topic—classifying gas pipeline incident causes with BiGRU, BiLSTM, and BERT—is retained.
 - No setup, installation, usage, model-training, or deployment commands were present in the original repository README or contributor-folder READMEs. None were removed.
+- The earlier header illustration (`bedrock-hero.svg`) was replaced by the project logo banner. The file is still in `docs/images/` but is no longer used.
 - The three contributor-folder READMEs are unchanged.
