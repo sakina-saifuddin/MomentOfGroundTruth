@@ -160,10 +160,16 @@ Narrative tokens --> backward LSTM --/
 
 ### Sakina’s scholar: BERT
 
-BERT is a transformer language model pretrained on text. This version uses `bert-base-uncased`; its 12 layers, 12 attention heads, and 768-number token vectors are kept frozen. Only the classification head is trained. The head maps the 768-number `[CLS]` vector to 8 cause scores, with 6,152 trainable weights.
+BERT is a transformer language model pretrained on text. This version uses `bert-base-uncased`; its 12 layers, 12 attention heads, and 768-number token vectors are kept frozen. Only the classification head is trained. The head maps one 768-number narrative vector to 8 cause scores, with 6,152 trainable weights. Two ways of building that single vector were run and are both reported:
+
+| Version | Narrative vector | Results folder |
+|---|---|---|
+| Mean pooling (main result) | Average of all real token vectors, padding ignored | `sakina/results_mean_pooling/` |
+| `pooler_output` (original PRD design) | The `[CLS]` vector passed through BERT's pooler layer | `sakina/results/` |
 
 ```text
-Narrative --> BERT-base-uncased (frozen) --> [CLS] vector (768)
+Narrative --> BERT-base-uncased (frozen) --> token vectors (768 each)
+          --> pooling (mean, or [CLS] pooler_output) --> one vector (768)
           --> trainable head (768 -> 8) --> predicted cause
 ```
 
@@ -175,7 +181,7 @@ flowchart LR
     B --> C[Stratified train / validation / test split]
     C --> D[BiGRU with FastText]
     C --> E[BiLSTM with attention and FastText]
-    C --> F[Frozen BERT with classifier head]
+    C --> F[Frozen BERT with classifier head: mean pooling and pooler_output]
     D --> G[Evaluation]
     E --> G
     F --> G
@@ -185,26 +191,68 @@ flowchart LR
 
 ## Chapter 5 — The moment of truth: who digs deepest?
 
-The model results are not all finished or recorded in this repository. These tables are intentionally blank until measured scores are available. No metric is estimated.
+All three models are trained and scored on the same 458 held-out test narratives, under both class-imbalance strategies from the proposal: **Exp 1** (class-weighted loss on the original training set) and **Exp 2** (smart oversampling with validated synthetic narratives, no class weights). Every number below is read from the results files the three of us committed; nothing is estimated. The full write-up, with figures, is in [`reports/final_comparison.md`](reports/final_comparison.md), and `python evaluation/compare_models.py` regenerates it.
 
-| Cause | BiGRU Precision | BiGRU Recall | BiGRU F1 | BiLSTM Precision | BiLSTM Recall | BiLSTM F1 | BERT Precision | BERT Recall | BERT F1 |
+The frozen BERT model was run with two pooling methods, so it appears twice in the summary: **mean pooling** (the average of all token vectors, the main BERT result) and **`pooler_output`** (the `[CLS]` vector through BERT's pooler layer, the original PRD design).
+
+![Test macro-F1 and accuracy for every model and experiment.](reports/figures/final/01_overall_comparison.png)
+
+### Summary (test set)
+
+| Model | Experiment | Macro precision | Macro recall | Macro F1 | Micro F1 | Accuracy |
+|---|---|---:|---:|---:|---:|---:|
+| BiGRU + FastText | Exp 1 | 0.4857 | 0.4618 | 0.4678 | 0.5240 | 0.5240 |
+| BiGRU + FastText | Exp 2 | 0.5567 | 0.4700 | 0.4749 | 0.6004 | 0.6004 |
+| BiLSTM + attention + FastText | Exp 1 | 0.5558 | 0.5428 | 0.5347 | 0.5677 | 0.5677 |
+| BiLSTM + attention + FastText | Exp 2 | 0.4845 | 0.4656 | 0.4681 | 0.5655 | 0.5655 |
+| Frozen BERT, mean pooling | Exp 1 | 0.5745 | 0.5484 | 0.5532 | 0.6026 | 0.6026 |
+| Frozen BERT, mean pooling | Exp 2 | 0.5601 | 0.5193 | 0.5310 | 0.6026 | 0.6026 |
+| Frozen BERT, pooler_output | Exp 1 | 0.3766 | 0.3010 | 0.3051 | 0.3908 | 0.3908 |
+| Frozen BERT, pooler_output | Exp 2 | 0.3331 | 0.3392 | 0.3212 | 0.3952 | 0.3952 |
+
+Micro F1 equals accuracy for single-label classification. Macro precision and recall are the unweighted mean of the eight per-class values.
+
+### Per-class results, Exp 1 (class-weighted loss)
+
+| Cause | BiGRU P | BiGRU R | BiGRU F1 | BiLSTM P | BiLSTM R | BiLSTM F1 | BERT (mean pooling) P | BERT (mean pooling) R | BERT (mean pooling) F1 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Equipment Failure | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Corrosion Failure | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Material Failure of Pipe or Weld | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Excavation Damage | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Natural Force Damage | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Other Outside Force Damage | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Other Incident Cause | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Incorrect Operation | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+| Equipment Failure | 0.674 | 0.525 | 0.590 | 0.690 | 0.508 | 0.585 | 0.755 | 0.653 | 0.700 |
+| Corrosion Failure | 0.567 | 0.687 | 0.621 | 0.805 | 0.667 | 0.729 | 0.667 | 0.687 | 0.677 |
+| Material Failure of Pipe or Weld | 0.491 | 0.456 | 0.473 | 0.564 | 0.544 | 0.554 | 0.378 | 0.596 | 0.463 |
+| Excavation Damage | 0.886 | 0.709 | 0.788 | 0.796 | 0.782 | 0.789 | 0.804 | 0.745 | 0.774 |
+| Natural Force Damage | 0.457 | 0.467 | 0.462 | 0.524 | 0.489 | 0.506 | 0.733 | 0.489 | 0.587 |
+| Other Outside Force Damage | 0.500 | 0.387 | 0.436 | 0.652 | 0.484 | 0.556 | 0.583 | 0.452 | 0.509 |
+| Other Incident Cause | 0.095 | 0.143 | 0.114 | 0.171 | 0.429 | 0.245 | 0.276 | 0.286 | 0.281 |
+| Incorrect Operation | 0.216 | 0.320 | 0.258 | 0.244 | 0.440 | 0.314 | 0.400 | 0.480 | 0.436 |
 
-| Model | Macro F1 | Micro F1 | Accuracy |
-|---|---:|---:|---:|
-| BiGRU with FastText | TODO | TODO | TODO |
-| BiLSTM with attention and FastText | TODO | TODO | TODO |
-| Frozen BERT with classifier head | TODO | TODO | TODO |
+### Per-class results, Exp 2 (smart oversampling)
 
-**Best model:** TODO — choose only after comparing measured validation results and reporting the held-out test results.
+| Cause | BiGRU P | BiGRU R | BiGRU F1 | BiLSTM P | BiLSTM R | BiLSTM F1 | BERT (mean pooling) P | BERT (mean pooling) R | BERT (mean pooling) F1 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Equipment Failure | 0.710 | 0.746 | 0.727 | 0.673 | 0.644 | 0.658 | 0.675 | 0.720 | 0.697 |
+| Corrosion Failure | 0.545 | 0.848 | 0.664 | 0.597 | 0.717 | 0.651 | 0.619 | 0.707 | 0.660 |
+| Material Failure of Pipe or Weld | 0.647 | 0.386 | 0.484 | 0.550 | 0.579 | 0.564 | 0.433 | 0.509 | 0.468 |
+| Excavation Damage | 0.706 | 0.873 | 0.780 | 0.694 | 0.782 | 0.735 | 0.754 | 0.782 | 0.768 |
+| Natural Force Damage | 0.475 | 0.422 | 0.447 | 0.690 | 0.444 | 0.541 | 0.639 | 0.511 | 0.568 |
+| Other Outside Force Damage | 0.727 | 0.258 | 0.381 | 0.476 | 0.323 | 0.385 | 0.706 | 0.387 | 0.500 |
+| Other Incident Cause | 0.143 | 0.107 | 0.122 | 0.050 | 0.036 | 0.042 | 0.263 | 0.179 | 0.213 |
+| Incorrect Operation | 0.500 | 0.120 | 0.194 | 0.147 | 0.200 | 0.169 | 0.391 | 0.360 | 0.375 |
+
+BERT columns above use mean pooling; the `pooler_output` per-class numbers are in [`reports/final_comparison.md`](reports/final_comparison.md).
+
+![Per-class test F1 heatmap for all eight runs.](reports/figures/final/02_per_class_f1_heatmap.png)
+
+### What the results show
+
+- **Highest test macro-F1:** Frozen BERT, mean pooling / Exp 1 (0.5532). **Highest validation macro-F1:** BiGRU + FastText / Exp 2 (0.5857). The two rankings disagree, and the top three test scores are within about 0.02 of each other, so this is a close race rather than a clear winner.
+- **Mean pooling vs `pooler_output`:** mean pooling raised BERT's test macro-F1 from 0.305 to 0.553 (Exp 1) and from 0.321 to 0.531 (Exp 2). With the transformer frozen, the `[CLS]` vector was never trained for this task; averaging uses every token. See [`reports/pooling_comparison.md`](reports/pooling_comparison.md).
+- **Class weights vs oversampling:** neither strategy wins everywhere. Oversampling lowered macro-F1 for BiLSTM and BERT (mean pooling) and changed BiGRU's by under 0.01. The rare classes (Other Incident Cause, Incorrect Operation) stayed the weakest under both strategies.
+- **Hardest causes:** Other Incident Cause and Incorrect Operation. **Easiest:** Excavation Damage and Corrosion Failure. The most common mistakes confuse Corrosion Failure with Material Failure and Equipment Failure with several other causes ([confusion matrices](reports/figures/final/04_confusion_matrices.png)).
+- **Size is not the story:** the BERT head trains 6,152 weights; the BiLSTM trains 903,688. See [`reports/figures/final/06_params_vs_macro_f1.png`](reports/figures/final/06_params_vs_macro_f1.png).
+
+Each run is one seed on a 458-row test set, with 25 to 31 test rows in each rare class, so differences of a few hundredths could change with another seed. The three models were trained with separate code and settings.
+
+**Best model:** the proposal ranks by macro-F1. By test macro-F1 that is Frozen BERT, mean pooling / Exp 1. Treat the final pick for the Streamlit app as a team decision once the close runs are reviewed; none of the model weights are tracked in this repository.
 
 **How to read these numbers:** Precision asks, “When the model predicts this cause, how often is it right?” Recall asks, “Of the reports with this cause, how many did it find?” F1 balances precision and recall. Macro F1 averages the class scores equally; micro F1 pools decisions across examples. Accuracy is the share of all predictions that are correct.
 
@@ -228,43 +276,43 @@ st.set_page_config(page_title="Moment-of-GroundTruth")
 
 ## Chapter 7 — Dig site map
 
-The repository is a small project shell today:
+The repository holds the shared data pipeline, all three models, and the combined evaluation. The Streamlit app is not here yet.
 
 ```text
 .
 |-- README.md
-|-- docs
-|   `-- images
-|       |-- CREDITS.md
-|       |-- app-screenshot-placeholder.svg
-|       |-- bedrock-hero.svg
-|       |-- chart-cause-counts.png
-|       |-- chart-data-split.png
-|       |-- chart-incidents-by-year.png
-|       |-- chart-narrative-lengths.png
-|       |-- dilkon-compressor-station.jpg
-|       |-- gas-pipeline-construction.jpg
-|       |-- gas-pipeline-river-crossing.jpg
-|       `-- pipeline-corrosion.jpg
-|-- scripts
-|   `-- generate_readme_charts.py
-|-- muhammad
-|   `-- README.md
-|-- parva
-|   `-- README.md
-`-- sakina
-    `-- README.md
+|-- Group1_Project_PRD.pdf, Team1_ProjectProposal.pdf
+|-- data/                    raw PHMSA CSV, cleaned data, experiment1/ and experiment2/ splits
+|-- scripts/                 data preparation, synthetic data, chart generators
+|-- src/, tests/             shared cleaning and split code with tests
+|-- evaluation/
+|   |-- compare_models.py    builds the 3-model x 2-experiment comparison
+|   |-- master_results.csv   one row per run (also .json)
+|-- reports/
+|   |-- final_comparison.md  full comparison with tables and figures
+|   |-- pooling_comparison.md  BERT mean pooling vs pooler_output
+|   `-- figures/final/       comparison figures
+|-- parva/                   BiGRU + FastText code and results
+|-- muhammad/                BiLSTM + attention + FastText code and results
+|-- sakina/                  frozen BERT code, results/ (pooler_output), results_mean_pooling/
+`-- docs/images/             README images
 ```
 
-The actual GitHub repository path remains [`sakina-saifuddin/GroundTruth`](https://github.com/sakina-saifuddin/GroundTruth), and the local checkout folder is `GroundTruth`. Both names are left unchanged.
-
-To check out this documentation branch, use the existing repository slug and folder name:
+The GitHub repository is [`sakina-saifuddin/MomentOfGroundTruth`](https://github.com/sakina-saifuddin/MomentOfGroundTruth):
 
 ```text
-git clone https://github.com/sakina-saifuddin/GroundTruth.git
-cd GroundTruth
-git switch docs/readme-story
+git clone https://github.com/sakina-saifuddin/MomentOfGroundTruth.git
+cd MomentOfGroundTruth
 ```
+
+### Reproduce the model comparison
+
+```text
+python -m pip install matplotlib numpy
+python evaluation/compare_models.py
+```
+
+This reads the saved results of all three models, rewrites `reports/final_comparison.md`, `evaluation/master_results.csv`, and the figures in `reports/figures/final/`. It does not retrain anything.
 
 ### Reproduce the README charts
 
@@ -278,17 +326,19 @@ git switch docs/readme-story
 
 4. The script writes the four chart images into `docs/images/`.
 
-The chart generator is the only reproducible script currently present. Model training notebooks, source code, environment pins, preprocessing scripts, and model weights are not in the repository, so their run order and exact commands cannot be verified here.
+Training code and results for each model are in `parva/`, `muhammad/`, and `sakina/`; each folder's README has its own run commands. Model weights are not tracked in the repository.
 
 ## Chapter 8 — Limits and next steps
 
 - The model labels past incident narratives. It does not predict whether or when a future incident will happen.
 - The classes are imbalanced: Equipment Failure makes up 25.8% of the supplied data, while Incorrect Operation makes up 5.4%. Class-weighted loss addresses this during training but does not make the dataset balanced.
-- Frozen BERT trains fewer parameters than full fine-tuning, but may be less effective for this task. That is a possibility to test, not a result.
+- Frozen BERT trains only 6,152 weights, far fewer than full fine-tuning or the 903,688 in the BiLSTM. With mean pooling it still scored the highest test macro-F1 (Exp 1), but with `pooler_output` it scored lowest. Whether full fine-tuning would do better was not tested.
 - BERT-base-uncased accepts at most 512 tokens at a time. Longer narratives need a documented truncation or chunking policy.
 - Operators file the incident reports. Older cause labels were mapped to the current eight categories, so the labels reflect reporting and mapping choices.
 - The raw CSV has one `IYEAR` value of 2001 and 88 of 2026. The 2001 report describes an incident on 11-7-2001 discovered on 1-21-02; both it and the partial-year 2026 records are retained.
-- The per-class scores, model comparison, chosen best model, app URL, deploy recipe, and app screenshot remain TODOs.
+- Every run is one seed on a 458-row test set, so small gaps between models are not reliable. Repeating runs over several seeds would show which differences hold.
+- The models were trained with separate code and settings; some differences may come from training choices rather than architecture.
+- The final model choice, the Streamlit app, its model weights, the app URL, the OCI deploy recipe, and the app screenshot remain TODOs. No `.pt` checkpoints are tracked in this repository.
 
 ## Chapter 9 — Crew and credits
 
