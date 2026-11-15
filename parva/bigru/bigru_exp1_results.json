@@ -1,0 +1,281 @@
+{
+  "model": "BiGRU + FastText (frozen)",
+  "experiment": "exp1_class_weighted_loss",
+  "accuracy": 0.5240174672489083,
+  "macro_precision": 0.48568567935364493,
+  "macro_recall": 0.46176803242096326,
+  "macro_f1": 0.4677923932011427,
+  "micro_precision": 0.5240174672489083,
+  "micro_recall": 0.5240174672489083,
+  "micro_f1": 0.5240174672489083,
+  "weighted_f1": 0.535769752859175,
+  "per_class": {
+    "EQUIPMENT FAILURE": {
+      "precision": 0.6739130434782609,
+      "recall": 0.5254237288135594,
+      "f1-score": 0.5904761904761905,
+      "support": 118
+    },
+    "CORROSION FAILURE": {
+      "precision": 0.5666666666666667,
+      "recall": 0.6868686868686869,
+      "f1-score": 0.6210045662100456,
+      "support": 99
+    },
+    "MATERIAL FAILURE OF PIPE OR WELD": {
+      "precision": 0.49056603773584906,
+      "recall": 0.45614035087719296,
+      "f1-score": 0.4727272727272727,
+      "support": 57
+    },
+    "EXCAVATION DAMAGE": {
+      "precision": 0.8863636363636364,
+      "recall": 0.7090909090909091,
+      "f1-score": 0.7878787878787878,
+      "support": 55
+    },
+    "NATURAL FORCE DAMAGE": {
+      "precision": 0.45652173913043476,
+      "recall": 0.4666666666666667,
+      "f1-score": 0.46153846153846156,
+      "support": 45
+    },
+    "OTHER OUTSIDE FORCE DAMAGE": {
+      "precision": 0.5,
+      "recall": 0.3870967741935484,
+      "f1-score": 0.43636363636363634,
+      "support": 31
+    },
+    "OTHER INCIDENT CAUSE": {
+      "precision": 0.09523809523809523,
+      "recall": 0.14285714285714285,
+      "f1-score": 0.11428571428571428,
+      "support": 28
+    },
+    "INCORRECT OPERATION": {
+      "precision": 0.21621621621621623,
+      "recall": 0.32,
+      "f1-score": 0.25806451612903225,
+      "support": 25
+    }
+  },
+  "confusion_matrix": [
+    [
+      62,
+      11,
+      3,
+      0,
+      7,
+      2,
+      11,
+      22
+    ],
+    [
+      0,
+      68,
+      8,
+      3,
+      5,
+      0,
+      13,
+      2
+    ],
+    [
+      7,
+      15,
+      26,
+      0,
+      6,
+      0,
+      2,
+      1
+    ],
+    [
+      0,
+      4,
+      3,
+      39,
+      3,
+      4,
+      1,
+      1
+    ],
+    [
+      8,
+      4,
+      7,
+      1,
+      21,
+      1,
+      3,
+      0
+    ],
+    [
+      2,
+      7,
+      2,
+      1,
+      3,
+      12,
+      4,
+      0
+    ],
+    [
+      6,
+      9,
+      4,
+      0,
+      0,
+      2,
+      4,
+      3
+    ],
+    [
+      7,
+      2,
+      0,
+      0,
+      1,
+      3,
+      4,
+      8
+    ]
+  ],
+  "best_val_macro_f1": 0.5534681892875395,
+  "best_epoch": 14,
+  "epochs_run": 19,
+  "hyperparameters": {
+    "embedding_dim": 300,
+    "hidden_size": 128,
+    "num_layers": 2,
+    "dropout": 0.3,
+    "max_len": 300,
+    "max_vocab_size": 50000,
+    "lr": 0.001,
+    "batch_size": 32,
+    "max_epochs": 30,
+    "patience": 5,
+    "grad_clip": 5.0,
+    "optimizer": "Adam",
+    "seed": 42,
+    "freeze_embeddings": true,
+    "train_csv": "data/experiment1/train.csv",
+    "loss": "CrossEntropyLoss(weight=class_weights)"
+  },
+  "training_history": [
+    {
+      "epoch": 1,
+      "train_loss": 2.007942651471062,
+      "val_loss": 1.804894719207496,
+      "val_macro_f1": 0.20422446956648752
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.7070349087737535,
+      "val_loss": 1.6243986999779416,
+      "val_macro_f1": 0.2664527146209564
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.5910713714053373,
+      "val_loss": 1.6412681947674668,
+      "val_macro_f1": 0.3497910208892169
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.5397480220302169,
+      "val_loss": 1.513914141738624,
+      "val_macro_f1": 0.4297681394898989
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.4288510121090312,
+      "val_loss": 1.4725484534313804,
+      "val_macro_f1": 0.40123448952973834
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.3441189544301637,
+      "val_loss": 1.50616641211928,
+      "val_macro_f1": 0.38298849236744914
+    },
+    {
+      "epoch": 7,
+      "train_loss": 1.2543298764967583,
+      "val_loss": 1.375651526869389,
+      "val_macro_f1": 0.42249562003853336
+    },
+    {
+      "epoch": 8,
+      "train_loss": 1.156675568209008,
+      "val_loss": 1.3286680798781545,
+      "val_macro_f1": 0.47635946108161037
+    },
+    {
+      "epoch": 9,
+      "train_loss": 1.0850905364108197,
+      "val_loss": 1.3468845936290004,
+      "val_macro_f1": 0.47877440185707776
+    },
+    {
+      "epoch": 10,
+      "train_loss": 1.0600416638481784,
+      "val_loss": 1.302480461304648,
+      "val_macro_f1": 0.5211135683578731
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.945056761374496,
+      "val_loss": 1.2774420140082376,
+      "val_macro_f1": 0.5237259131206791
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.8582949307602896,
+      "val_loss": 1.3719796737035115,
+      "val_macro_f1": 0.5116460455843059
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.8405207454318732,
+      "val_loss": 1.3593223011284543,
+      "val_macro_f1": 0.5431904384630221
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.7601050641615066,
+      "val_loss": 1.3382583605615717,
+      "val_macro_f1": 0.5534681892875395
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.7013947538926568,
+      "val_loss": 1.3570020700755872,
+      "val_macro_f1": 0.5527627947654513
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.6508189941236111,
+      "val_loss": 1.4408284634874577,
+      "val_macro_f1": 0.5499249140573832
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.6125261331947757,
+      "val_loss": 1.490549043605202,
+      "val_macro_f1": 0.49581000494392313
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.5479594100808873,
+      "val_loss": 1.4982314329398305,
+      "val_macro_f1": 0.5506325718708633
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.47701657120610624,
+      "val_loss": 1.6522647958052785,
+      "val_macro_f1": 0.5050209763197878
+    }
+  ]
+}
