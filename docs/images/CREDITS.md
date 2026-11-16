@@ -19,3 +19,19 @@ The four photographs in this folder are openly licensed Wikimedia Commons files.
 The two photographs taken in England are illustrative examples only. None of these images depicts the NTSB incidents discussed in the README. The construction photograph includes workers at a distance; no one is identifiable.
 
 The repository does not currently have a license file. The original project illustrations and charts therefore have no separate reuse license asserted.
+
+## Streamlit app photos (`app/assets/`)
+
+Resized and compressed from Wikimedia Commons files. Each is shown in the app with its credit line.
+
+| Local file | Cause shown | Author | License |
+|---|---|---|---|
+| `equipment-failure.jpg` | Equipment failure | Steven Baltakatei Sandoval | CC BY-SA 4.0 |
+| `corrosion-failure.jpg` | Corrosion failure | Cafe Nervosa / Derek Mawhinney | CC BY-SA 3.0 |
+| `material-failure.jpg` | Material failure of pipe or weld | Hamid Soufi | CC BY-SA 3.0 |
+| `excavation-damage.jpg` | Excavation damage | Peter Facey | CC BY-SA 2.0 |
+| `natural-force-damage.jpg` | Natural force damage | Bob1960evens | CC BY-SA 4.0 |
+| `other-incident-cause.jpg` | Other incident cause | NTSB | Public domain |
+| `incorrect-operation.jpg` | Incorrect operation | Derek Gray | CC BY-SA 2.0 |
+
+"Other outside force damage" has no photo; the app draws a sketch instead. The photos illustrate each cause and do not depict the incidents in the data.

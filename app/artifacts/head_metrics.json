@@ -1,0 +1,9 @@
+{
+  "model": "bert-base-uncased (frozen) + mean pooling + linear head, Experiment 1 settings",
+  "best_epoch": 6,
+  "val_macro_f1": 0.5513902678793472,
+  "test_accuracy": 0.5786026200873362,
+  "test_macro_f1": 0.521839471245731,
+  "test_rows": 458,
+  "note": "Retrained locally for the app; close to but not identical to the Colab run in sakina/results_mean_pooling/."
+}
