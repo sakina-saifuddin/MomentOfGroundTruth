@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.x-C8201C?logo=python&logoColor=white"></a>
   <a href="https://pytorch.org/"><img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-models-C8201C?logo=pytorch&logoColor=white"></a>
-  <a href="https://streamlit.io/"><img alt="Streamlit" src="https://img.shields.io/badge/Streamlit-app%20planned-C8201C?logo=streamlit&logoColor=white"></a>
+  <a href="https://streamlit.io/"><img alt="Streamlit" src="https://img.shields.io/badge/Streamlit-app%20included-C8201C?logo=streamlit&logoColor=white"></a>
   <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-not%20specified-555555"></a>
 </p>
 
@@ -15,7 +15,7 @@
 
 **Name meaning:** “Moment of truth” is the instant something is decided, and “ground truth” is the machine learning term for the correct label. Here the correct label is the **CAUSE** of a gas pipeline incident, and pipelines are buried in the ground. The logo is a rubber stamp because every report ends the same way: someone has to stamp a cause on it.
 
-This project reads the written account of a U.S. gas transmission or gathering pipeline incident and predicts its cause from eight categories. The work moves from public incident reports, through three text models, to a Streamlit app intended to return a predicted cause when someone pastes in a narrative.
+This project reads the written account of a U.S. gas transmission or gathering pipeline incident and predicts its cause from eight categories. The work moves from public incident reports, through three text models, to a Streamlit app that returns a predicted cause, a picture of it, and a SHAP explanation when someone pastes in a narrative.
 
 <br clear="right">
 
@@ -266,23 +266,39 @@ Class-weighted loss gives less common classes more influence during training. It
 
 ## Chapter 6 — Ground control
 
-The planned deliverable is a Streamlit web app: a person pastes in an incident narrative and receives a predicted cause. The project brief says the app is deployed on Oracle Cloud Infrastructure (OCI), but this repository contains no app source, live URL, deployment configuration, model weights, or screenshot. The image below is a placeholder, not a screenshot of a running app.
+The deliverable is a Streamlit web app, page title **Moment-of-GroundTruth**. Paste in an incident narrative (or pick one of eight real test-set reports) and it returns:
 
-![Placeholder preview showing where the Moment-of-GroundTruth Streamlit app screenshot will go; the app is not included in this repository.](docs/images/app-screenshot-placeholder.svg)
+- the predicted cause, stamped like the logo, with the model's confidence and a bar for each of the eight causes;
+- an illustrative photo of what that cause looks like (credits in [docs/images/CREDITS.md](docs/images/CREDITS.md));
+- a **SHAP** explanation that shades each word by how much it pushed the model toward or away from the answer.
 
-The app page title should be **Moment-of-GroundTruth**. When the application source is added, set its Streamlit page title to that exact project name:
+Six tabs explain the project in plain language: **Find the cause**, **The story** (why this problem, why the name), **Data & split**, **The models**, **Results** (all the comparison graphs) and **Limits & credits**. Headings use Anton, the logo's typeface (an approximation; the logo itself is a PDF).
 
-```python
-st.set_page_config(page_title="Moment-of-GroundTruth")
+**Which model is in the app:** frozen BERT-base-uncased with mean pooling and a linear head, trained with Experiment 1 settings (class-weighted loss). The app retrains this small head locally from cached BERT features (`app/build_head.py`), so its test scores (57.9% accuracy, 0.522 macro-F1) are close to, but not identical to, the Colab run in Chapter 5 (0.553 macro-F1). The tracked file `app/artifacts/head.pt` holds only the 6,152-weight head; BERT itself is downloaded from Hugging Face on first run (about 440 MB).
+
+**Speed:** the model loads once when the page opens (about 10 seconds). A prediction takes about 0.1 seconds. SHAP is the slow step (about 15 seconds quick, 40 seconds detailed) because it re-scores the narrative with words hidden; the app shows a progress bar.
+
+**Run locally** (Python 3.10+, from the project root):
+
+```text
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements.txt
+streamlit run app/app.py
 ```
 
-**Run locally:** The app cannot run from this repository yet because neither an app entry point nor a dependency file is tracked. Once those files are added, the expected shape of the workflow is to install the pinned dependencies and run `streamlit run app.py` from the project root. That command is not runnable here until `app.py` and its dependencies are added. The data-chart script in Chapter 7 is runnable now.
+Then open http://localhost:8501. To rebuild the head from scratch (needs the data splits in `data/experiment1/`): `python app/build_head.py`.
 
-**Deploy to OCI:** The target platform is OCI, but the repository does not record which OCI service, instance, network rules, startup command, or public endpoint is in use. A typical VM deployment would install the pinned dependencies, start Streamlit on the configured host and port, and allow that traffic through the OCI network rules; add the actual resource and network details before treating this as a reproducible deployment recipe. Do not commit credentials or private keys.
+**Deploy to OCI (VM):** the repository includes a systemd unit and a setup script in `deploy/`. On an Ubuntu VM with at least 4 GB of RAM:
+
+1. In the OCI console add an ingress rule (TCP 8501) to the VM's security list or network security group.
+2. Clone the repository (URL in Chapter 7), `cd MomentOfGroundTruth`, then run `bash deploy/setup_vm.sh`. It installs dependencies, adds swap, opens the VM firewall and starts the app as a `gt-app` service.
+3. Open `http://<vm-public-ip>:8501`. Put nginx and a certificate in front for HTTPS and a clean URL.
+
+No live URL is recorded here yet. The app has no login, so restrict the ingress source if it should not be public. Do not commit credentials or private keys.
 
 ## Chapter 7 — Dig site map
 
-The repository holds the shared data pipeline, all three models, and the combined evaluation. The Streamlit app is not here yet.
+The repository holds the shared data pipeline, all three models, and the combined evaluation. The Streamlit app is in `app/`.
 
 ```text
 .
@@ -291,6 +307,9 @@ The repository holds the shared data pipeline, all three models, and the combine
 |-- data/                    raw PHMSA CSV, cleaned data, experiment1/ and experiment2/ splits
 |-- scripts/                 data preparation, synthetic data, chart generators
 |-- src/, tests/             shared cleaning and split code with tests
+|-- app/                     Streamlit app: app.py, tabs, SHAP, head.pt, cause photos
+|-- deploy/                  OCI VM setup script and systemd unit
+|-- requirements.txt         app dependencies
 |-- evaluation/
 |   |-- compare_models.py    builds the 3-model x 2-experiment comparison
 |   |-- master_results.csv   one row per run (also .json)
@@ -344,7 +363,8 @@ Training code and results for each model are in `parva/`, `muhammad/`, and `saki
 - The raw CSV has one `IYEAR` value of 2001 and 88 of 2026. The 2001 report describes an incident on 11-7-2001 discovered on 1-21-02; both it and the partial-year 2026 records are retained.
 - Every run is one seed on a 458-row test set, so small gaps between models are not reliable. Repeating runs over several seeds would show which differences hold.
 - The models were trained with separate code and settings; some differences may come from training choices rather than architecture.
-- The final model choice, the Streamlit app, its model weights, the app URL, the OCI deploy recipe, and the app screenshot remain TODOs. No `.pt` checkpoints are tracked in this repository.
+- The final model choice, the live OCI URL and an app screenshot remain TODOs. Only the small app head (`app/artifacts/head.pt`) is tracked; the full model checkpoints from the Colab runs are not.
+- App only: narratives over about 350 words are cut at BERT's 512-token limit (about 6% of training narratives exceed it), SHAP explanations are slow, "Other outside force damage" has a sketch instead of a photo, and the pictures illustrate a cause rather than show the incident.
 
 ## Chapter 9 — Crew and credits
 
@@ -374,6 +394,7 @@ See [docs/images/CREDITS.md](docs/images/CREDITS.md) for full attribution and re
 | `chart-incidents-by-year.png` | Incident counts by year | Moment-of-GroundTruth project, generated from PHMSA CSV | No separate license; repository license not specified | Generated by `scripts/generate_readme_charts.py` |
 | `chart-narrative-lengths.png` | Narrative word-count distribution | Moment-of-GroundTruth project, generated from PHMSA CSV | No separate license; repository license not specified | Generated by `scripts/generate_readme_charts.py` |
 | `chart-data-split.png` | Planned stratified split sizes | Moment-of-GroundTruth project, generated from PHMSA CSV | No separate license; repository license not specified | Generated by `scripts/generate_readme_charts.py` |
+| `app/assets/*.jpg` | Cause photos used in the app (one per cause except Other outside force damage) | See [docs/images/CREDITS.md](docs/images/CREDITS.md) | CC BY-SA 2.0 / 3.0 / 4.0 and public domain (per file) | Wikimedia Commons |
 | `app-screenshot-placeholder.svg` | App preview placeholder, not a product screenshot | Moment-of-GroundTruth project | No separate license; repository license not specified | Created for this README |
 
 The Wikimedia photographs were resized and compressed for this repository. Their original file pages describe the depicted subjects and terms. The UK construction and river photographs are examples only, not U.S. incident records. The construction photograph includes workers at a distance; no one is identifiable.

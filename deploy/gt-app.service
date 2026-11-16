@@ -1,0 +1,12 @@
+[Unit]
+Description=Moment of GroundTruth (Streamlit)
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/MomentOfGroundTruth
+ExecStart=/home/ubuntu/MomentOfGroundTruth/.venv/bin/streamlit run app/app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

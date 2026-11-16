@@ -6,3 +6,10 @@ transformers>=4.40
 pytest>=7.0
 google-generativeai>=0.7.0
 python-dotenv>=1.0.0
+
+# Streamlit app (app/). CPU-only PyTorch is enough:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+streamlit>=1.50
+torch>=2.2
+shap>=0.45
+numpy>=1.26
