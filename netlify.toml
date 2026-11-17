@@ -1,9 +1,9 @@
-# Netlify serves this folder as a static site. /api/* is proxied to the model server on the OCI VM,
+# Netlify serves the web/ folder as a static site. /api/* is proxied to the model server on the OCI VM,
 # so the browser only ever talks to https (no mixed-content block) and no CORS setup is needed.
 #
 # Replace YOUR_VM_HOST with the VM's public IP (or a hostname such as 129-146-1-2.nip.io).
 [build]
-  publish = "."
+  publish = "web"
 
 [[redirects]]
   from = "/api/*"
