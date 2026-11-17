@@ -294,7 +294,17 @@ Then open http://localhost:8501. To rebuild the head from scratch (needs the dat
 2. Clone the repository (URL in Chapter 7), `cd MomentOfGroundTruth`, then run `bash deploy/setup_vm.sh`. It installs dependencies, adds swap, opens the VM firewall and starts the app as a `gt-app` service.
 3. Open `http://<vm-public-ip>:8501`. Put nginx and a certificate in front for HTTPS and a clean URL.
 
-No live URL is recorded here yet. The app has no login, so restrict the ingress source if it should not be public. Do not commit credentials or private keys.
+The Streamlit app has no live URL recorded here yet. It has no login, so restrict the ingress source if it should not be public. Do not commit credentials or private keys.
+
+### The presentation website
+
+The project deck is also a website: **https://momentofgroundtruth.netlify.app**. Netlify redeploys it on every push to `main` (config in `netlify.toml`; the page is built from `docs/Moment of GroundTruth.html` by `python web/build_web.py`). It adds three things to the deck:
+
+- **Live demo slide.** Paste any narrative or pick one of eight real test reports; the page calls the model through `api/server.py` on the OCI VM (`/api` is proxied by Netlify, see `netlify.toml`). If the server is unreachable it replays saved results for the eight examples and says so.
+- **Audience game, "Can you beat the model?"** A QR code opens `/play/` on phones, where people pick the cause of three real test reports. The next slide shows the live votes against the model, then reveals the true causes and the model answers (press `V`; `Shift+X` clears the votes). Votes live in Netlify Blobs through `netlify/functions/game.mjs`. The answers stay on the server until the reveal.
+- **Title-slide stamp animation** and the project stamp as the browser icon.
+
+To point the demo at the VM, set the VM address in `netlify.toml` and run `bash deploy/setup_vm.sh` on the VM (it starts the API on port 8000; open TCP 8000 in the security list).
 
 ## Chapter 7 — Dig site map
 
@@ -363,7 +373,7 @@ Training code and results for each model are in `parva/`, `muhammad/`, and `saki
 - The raw CSV has one `IYEAR` value of 2001 and 88 of 2026. The 2001 report describes an incident on 11-7-2001 discovered on 1-21-02; both it and the partial-year 2026 records are retained.
 - Every run is one seed on a 458-row test set, so small gaps between models are not reliable. Repeating runs over several seeds would show which differences hold.
 - The models were trained with separate code and settings; some differences may come from training choices rather than architecture.
-- The final model choice, the live OCI URL and an app screenshot remain TODOs. Only the small app head (`app/artifacts/head.pt`) is tracked; the full model checkpoints from the Colab runs are not.
+- The final model choice, the live OCI URL for the Streamlit app and an app screenshot remain TODOs. Only the small app head (`app/artifacts/head.pt`) is tracked; the full model checkpoints from the Colab runs are not.
 - App only: narratives over about 350 words are cut at BERT's 512-token limit (about 6% of training narratives exceed it), SHAP explanations are slow, "Other outside force damage" has a sketch instead of a photo, and the pictures illustrate a cause rather than show the incident.
 
 ## Chapter 9 — Crew and credits
