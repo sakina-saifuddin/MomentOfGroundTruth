@@ -301,7 +301,7 @@ The Streamlit app has no live URL recorded here yet. It has no login, so restric
 The project deck is also a website: **https://momentofgroundtruth.netlify.app**. Netlify redeploys it on every push to `main` (config in `netlify.toml`; the page is built from `docs/Moment of GroundTruth.html` by `python web/build_web.py`). It adds three things to the deck:
 
 - **Live demo slide.** Paste any narrative or pick one of eight real test reports; the page calls the model through `api/server.py` on the OCI VM (`/api` is proxied by Netlify, see `netlify.toml`). If the server is unreachable it replays saved results for the eight examples and says so.
-- **Audience game, "Can you beat the model?"** A QR code opens `/play/` on phones, where people pick the cause of three real test reports. The next slide shows the live votes against the model, then reveals the true causes and the model answers (press `V`; `Shift+X` clears the votes). Votes live in Netlify Blobs through `netlify/functions/game.mjs`. The answers stay on the server until the reveal.
+- **Audience game, "Can you beat the model?"** A QR code opens `/play/` on phones, where people pick the cause of one real test report. The next slide shows the live votes against the model, then reveals the true cause and the model answer (press `V`; `Shift+X` clears the votes). Votes live in Netlify Blobs through `netlify/functions/game.mjs`. The answers stay on the server until the reveal.
 - **Title-slide stamp animation** and the project stamp as the browser icon.
 
 To point the demo at the VM, set the VM address in `netlify.toml` and run `bash deploy/setup_vm.sh` on the VM (it starts the API on port 8000; open TCP 8000 in the security list).

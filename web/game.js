@@ -31,7 +31,7 @@
     if(!st)return;
     $('#gv-voters').textContent=st.voters;
     const mx=Math.max(1,st.voters);
-    $('#gv-rounds').innerHTML=st.rounds.map((r,i)=>`<div class="gv-rrow"><span>Report ${i+1}</span><div class="tr"><div class="fl" style="width:${Math.round(100*r.total/mx)}%"></div></div><b>${r.total}</b></div>`).join('');
+    $('#gv-rounds').innerHTML=st.rounds.length===1?'':st.rounds.map((r,i)=>`<div class="gv-rrow"><span>Report ${i+1}</span><div class="tr"><div class="fl" style="width:${Math.round(100*r.total/mx)}%"></div></div><b>${r.total}</b></div>`).join('');
   }
 
   /* slide 14: live bars, then the reveal */
@@ -40,7 +40,8 @@
   function drawRes(){
     if(!st)return;
     const rev=st.revealed&&st.answers;
-    $('#gr-cols').innerHTML=ROUNDS.map((rd,i)=>{
+    const one=ROUNDS.length===1;$('#gr-cols').className='gr-cols'+(one?' one':'');
+    const cols=ROUNDS.map((rd,i)=>{
       const c=st.rounds[i],tot=c.total,mx=Math.max(1,...c.counts),a=rev?st.answers[i]:null;
       const top=c.counts.indexOf(Math.max(...c.counts));
       const rows=c.counts.map((n,k)=>{
@@ -48,8 +49,10 @@
         return `<div class="gr-row${isT?' truth':''}${tot&&k===top?' top':''}"><span class="n">${SHORT[k]}</span><div class="tr"><div class="fl" style="width:${Math.round(100*n/mx)}%"></div></div><span class="p">${pct}%</span><span class="mk">${isT?'<i class="t">✓</i>':''}${isM?'<i class="m">M</i>':''}</span></div>`;
       }).join('');
       const res=a?`Crowd right: <b>${tot?Math.round(100*c.counts[a.truth]/tot):0}%</b> · Model: <b>${a.model===a.truth?'right':'wrong'}</b> (${Math.round(a.conf*100)}% sure)`:'';
-      return `<div class="gr-col"><div class="gr-h"><b>Report ${i+1}</b><span class="lab">${tot} answers</span></div><p class="gr-ex">${esc(rd.excerpt)}</p><div><div class="gr-rows">${rows}</div><div class="gr-res" style="margin-top:.5rem">${res}</div></div></div>`;
+      const card=one?`<div class="gr-rep paper"><div class="lab" style="color:#5a5143">The report · what caused it?</div><p>${esc(rd.text)}</p></div>`:'';
+      return card+`<div class="gr-col"><div class="gr-h"><b>${one?'The votes':'Report '+(i+1)}</b><span class="lab">${tot} answers</span></div>${one?'':`<p class="gr-ex">${esc(rd.excerpt)}</p>`}<div><div class="gr-rows">${rows}</div><div class="gr-res" style="margin-top:.5rem">${res}</div></div></div>`;
     }).join('');
+    $('#gr-cols').innerHTML=cols;
     const btn=$('#gm-reveal');btn.textContent=rev?'Hide answers':'Reveal answers';
     const score=$('#gr-score'),vd=$('#gr-verdict');
     if(!rev){score.textContent=st.voters+' people voting';vd.innerHTML='';shownVerdict='';return}
@@ -60,8 +63,8 @@
       avg+=c.total?c.counts[a.truth]/c.total:0;
     });
     const n=st.answers.length;
-    score.textContent=`Crowd vote ${crowd}/${n} · Model ${model}/${n} · average person ${Math.round(100*avg/n)}% right`;
-    const v=crowd>model?'The crowd wins':crowd<model?'The model wins':'Dead heat';
+    score.textContent=n===1?`${Math.round(100*avg)}% of the room got it right · the model got it ${model?'right':'wrong'}`:`Crowd vote ${crowd}/${n} · Model ${model}/${n} · average person ${Math.round(100*avg/n)}% right`;
+    const v=crowd>model?'The crowd wins':crowd<model?'The model wins':n===1?(model?'Both got it':'Both fooled'):'Dead heat';
     if(v!==shownVerdict){vd.innerHTML=`<span class="gm-stamp">${v}</span>`;shownVerdict=v}
   }
   async function toggleReveal(){

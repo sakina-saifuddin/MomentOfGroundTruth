@@ -32,7 +32,7 @@ from causes import CAUSES, LABELS  # noqa: E402
 SITE = "https://momentofgroundtruth.netlify.app"
 PLAY_URL = SITE + "/play/"
 EXAMPLE_ROWS = [438, 83, 72, 365, 130, 12, 434, 118]
-ROUND_PICKS = [4, 5, 3]  # which of the eight examples (1-based) the audience game uses, in order
+ROUND_PICKS = [2]  # which of the eight examples (1-based) the audience game uses, in order
 SAVED = WEB / "saved_results.json"  # real model + SHAP output for the eight examples
 
 
@@ -119,7 +119,10 @@ def main() -> None:
     build_play(rounds)
 
     # slides: the app slide becomes the live demo; the two game slides go in front of it
-    game_slides = read("game_slides.html").replace("/*QR*/", qr_svg(PLAY_URL)).replace("/*PLAYURL*/", PLAY_URL.replace("https://", ""))
+    nr = len(rounds)
+    what = "a real incident report" if nr == 1 else f"{nr} real incident reports"
+    same = "The same report goes" if nr == 1 else f"The same {nr} reports go"
+    game_slides = read("game_slides.html").replace("/*QR*/", qr_svg(PLAY_URL)).replace("/*PLAYURL*/", PLAY_URL.replace("https://", "")).replace("/*WHAT*/", what).replace("/*SAME*/", same)
     live = game_slides.strip() + chr(10) + chr(10) + read("live_slide.html").strip()
     html, n = re.subn(r'<section class="slide s-app" id="s14">.*?</section>', lambda m: live, html, count=1, flags=re.S)
     assert n == 1, "slide 14 not found"
@@ -148,8 +151,8 @@ def main() -> None:
 
     # the speaker plan: two new entries before the live demo
     new_plan = (
-        "{w:'muhammad',t:50,title:'Beat the model',say:['Phones out. Scan the code. Three real reports from the test set: tap the cause.','The model has never seen these reports. Same three, same eight choices.','Watch the people-in counter. When it stops growing, move on.']},\n "
-        "{w:'muhammad',t:80,title:'Crowd vs model',say:['Press V or click Reveal to show the true causes and the model answers.','Read each report: where the crowd split, where the model was wrong, how sure it was.','Shift+X wipes all votes for a fresh run.']},\n "
+        "{w:'muhammad',t:40,title:'Beat the model',say:['Phones out. Scan the code. One real report from the test set: tap the cause.','The model has never seen this report. Same eight choices.','Watch the people-in counter. When it stops growing, move on.']},\n "
+        "{w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the true cause and the model answer.','Read it out: where the crowd split, whether the model was wrong, how sure it was.','Shift+X wipes all votes for a fresh run.']},\n "
     )
     html, n = re.subn(r"(\{w:'sakina',t:\d+,title:'App and live demo')", lambda m: new_plan + m.group(1), html, count=1)
     assert n == 1, "plan entry not found"

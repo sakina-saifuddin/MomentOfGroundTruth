@@ -91,9 +91,9 @@ function intro(){
   screen='intro';
   $('#app').innerHTML=head()+`
     <h1>Can you beat the <em>model?</em></h1>
-    <p class="lede">${N} real pipeline incident reports. For each one, tap the cause you think the investigators recorded. Our model gets the same reports. The big screen shows who wins.</p>
+    <p class="lede">${N===1?'A real pipeline incident report. Tap the cause you think the investigators recorded. Our model gets the same report.':N+' real pipeline incident reports. For each one, tap the cause you think the investigators recorded. Our model gets the same reports.'} The big screen shows who wins.</p>
     <button class="go" id="start">${picks.some(p=>p>=0)?'Continue':'Start'}</button>
-    <p class="lab" style="margin-top:1rem;text-align:center">${N} reports · about a minute</p>`;
+    <p class="lab" style="margin-top:1rem;text-align:center">${N===1?'one report · about 20 seconds':N+' reports · about a minute'}</p>`;
   $('#start').onclick=()=>{round=Math.max(0,picks.findIndex(p=>p<0));if(revealed||picks.every(p=>p>=0))return done();play()};
 }
 
@@ -101,11 +101,11 @@ function play(){
   screen='play';
   const r=ROUNDS[round];
   $('#app').innerHTML=head()+`
-    <div class="dots">${ROUNDS.map((_,i)=>`<button data-i="${i}" aria-label="Report ${i+1}" class="${i===round?'on':picks[i]>=0?'done':''}"></button>`).join('')}</div>
-    <p class="lab">Report ${round+1} of ${N} · what caused it?</p>
+    <div class="dots" ${N===1?'hidden':''}>${ROUNDS.map((_,i)=>`<button data-i="${i}" aria-label="Report ${i+1}" class="${i===round?'on':picks[i]>=0?'done':''}"></button>`).join('')}</div>
+    <p class="lab">${N===1?'The report':'Report '+(round+1)+' of '+N} · what caused it?</p>
     <div class="narr paper">${esc(r.text)}</div>
     <div class="opts">${CAUSES.map((c,i)=>`<button class="opt${picks[round]===i?' sel':''}" data-i="${i}"><b>${esc(c.title)}</b><span>${esc(c.blurb)}</span></button>`).join('')}</div>
-    <div class="nav"><button id="prev" ${round===0?'disabled':''}>← Back</button><button id="next">${round===N-1?'Finish →':'Skip →'}</button></div>`;
+    <div class="nav"><button id="prev" ${round===0?'disabled':''}>← Back</button><button id="next">${round===N-1?(picks[round]>=0?'Done →':'Skip →'):'Skip →'}</button></div>`;
   $('#app').querySelectorAll('.dots button').forEach(b=>b.onclick=()=>{round=+b.dataset.i;play()});
   $('#app').querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(+b.dataset.i));
   $('#prev').onclick=()=>{round--;play()};
@@ -168,7 +168,7 @@ function showResults(){
       </div>
       <p style="margin-top:.4rem">${share}% of the room got this one right.</p></div>`;
   }).join('');
-  const verdict=me>model?'You beat the model':me<model?'The model wins':'Dead heat';
+  const verdict=me>model?'You beat the model':me<model?'The model wins':answers.length===1?(me?'Both got it':'Both fooled'):'Dead heat';
   const avg=Math.round(100*crowd/answers.length);
   $('#results').innerHTML=`<div class="stampbox"><span class="verdict">${verdict}</span></div>
     <p class="lede">You: <b style="color:var(--text)">${me}/${answers.length}</b> · Model: <b style="color:var(--text)">${model}/${answers.length}</b> · The room averaged <b style="color:var(--text)">${avg}%</b></p>${rows}`;

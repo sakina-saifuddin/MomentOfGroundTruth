@@ -35,6 +35,11 @@
 .lg.m,.mk i.m{background:var(--stamp);color:#fff}
 .gr-res{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.05em;color:var(--mute);min-height:1.2rem}
 .gr-res b{color:var(--text);font-weight:500}
+.gr-cols.one{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:2.6rem;align-items:start}
+.gr-rep{padding:1.3rem 1.5rem;font-size:1.05rem;line-height:1.65;transform:rotate(-1deg);align-self:start}
+.gr-rep p{margin-top:.5rem}
+.gr-cols.one .gr-row{font-size:.95rem;grid-template-columns:8.4rem minmax(0,1fr) 2.8rem 3.4rem}
+.gr-cols.one .gr-row .tr{height:1rem}
 .gr-foot{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
 .gr-score{font-family:var(--f-mono);font-size:.9rem;letter-spacing:.05em;color:var(--text)}
 .gr-legend{margin-left:auto}
