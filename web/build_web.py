@@ -40,6 +40,23 @@ def offline() -> dict:
     }
 
 
+def favicon() -> str:
+    """The project stamp as the browser-tab icon, embedded so it works on any host."""
+    import base64
+    import io
+
+    from PIL import Image
+
+    im = Image.open(ROOT / "docs" / "images" / "logo-stamp.png").convert("RGBA")
+    side = max(im.size)
+    canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    canvas.paste(im, ((side - im.width) // 2, (side - im.height) // 2), im)
+    buf = io.BytesIO()
+    canvas.resize((128, 128), Image.LANCZOS).save(buf, "PNG")
+    uri = "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+    return f'<link rel="icon" type="image/png" href="{uri}">' + chr(10) + f'<link rel="apple-touch-icon" href="{uri}">'
+
+
 def main() -> None:
     html = (ROOT / "docs" / "Moment of GroundTruth.html").read_text(encoding="utf-8")
 
@@ -48,16 +65,17 @@ def main() -> None:
 
     marker = "@media (prefers-reduced-motion:reduce)"
     assert marker in html
-    html = html.replace(marker, (WEB / "live_slide.css").read_text(encoding="utf-8") + marker, 1)
+    html = html.replace(marker, (WEB / "live_slide.css").read_text(encoding="utf-8") + (WEB / "stamp_anim.css").read_text(encoding="utf-8") + marker, 1)
 
     start = html.index("/* ---------- slide 14 app ---------- */")
     end = html.index("/* ---------- enter hooks ---------- */")
-    js = "const OFFLINE=" + json.dumps(offline(), ensure_ascii=False) + ";\n" + (WEB / "live_slide.js").read_text(encoding="utf-8") + "\n"
+    js = (WEB / "stamp_anim.js").read_text(encoding="utf-8") + "const OFFLINE=" + json.dumps(offline(), ensure_ascii=False) + ";\n" + (WEB / "live_slide.js").read_text(encoding="utf-8") + "\n"
     html = html[:start] + js + html[end:]
 
     assert "e.target.matches('input')" in html
     html = html.replace("e.target.matches('input')", "e.target.matches('input,textarea')", 1)
 
+    html = html.replace("function onEnter(n){", "function onEnter(n){" + chr(10) + "  if(n===0)playStamp();", 1)
     hook = "if(n===9&&window._barsReset)window._barsReset();"
     assert hook in html
     html = html.replace(hook, hook + "\n  if(n===12&&window._lvEnter)window._lvEnter();", 1)
@@ -66,6 +84,7 @@ def main() -> None:
     assert old in html
     html = html.replace(old, "The live demo is on this slide, no window switch. Pick an example or paste any narrative; the page calls our model on Oracle Cloud. The badge top right says LIVE or OFFLINE.", 1)
 
+    html = html.replace("</head>", favicon() + chr(10) + "</head>", 1)
     (WEB / "index.html").write_text(html, encoding="utf-8")
     print("wrote", WEB / "index.html", f"{len(html) / 1e6:.2f} MB")
 

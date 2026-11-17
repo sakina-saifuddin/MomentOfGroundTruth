@@ -38,4 +38,4 @@
 .lv-legend span{display:inline-block;padding:1px .5rem;margin-right:.4rem;color:var(--ink);font-family:var(--f-mono);font-size:.7rem}
 .lv-badge{font-family:var(--f-mono);font-size:.78rem;color:var(--mute)}.lv-badge b{color:var(--text)}
 .lv-msg{border-left:3px solid var(--gru);padding:.4rem 0 .4rem 1rem;color:var(--text);line-height:1.5}
-@media (max-width:900px){.lv-out{max-height:none}
+@media (max-width:900px){.lv-out{max-height:none}.lv-top{grid-template-columns:1fr}.lv-brow{grid-template-columns:9rem minmax(0,1fr) 2.6rem}}
