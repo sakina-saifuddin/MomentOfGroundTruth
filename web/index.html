@@ -470,6 +470,38 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
 .tiles{gap:1.6rem}
 .tile .nums{padding-bottom:.25rem}
 .tile .nums small{margin-top:.2rem}
+/* story layer: the "why" boxes, the three-model plan slide, and less clutter on the model slides */
+.story{border-left:3px solid var(--c,var(--stamp));padding:.15rem 0 .15rem 1rem;margin-top:1rem;max-width:36rem}
+.story .k{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:.3rem}
+.story p{font-size:1.02rem;line-height:1.5;color:var(--text)}
+.story.wide{max-width:none;grid-column:1/-1;margin-top:0}
+
+/* model slides: no diagrams or settings tables, only the why and the result */
+.s-model .arch,.s-model .specs,.s-bert .specs{display:none}
+.s-model .body{align-items:start}
+.s-model .story:first-of-type{margin-top:0}
+.s-flow .models3{display:none}
+.s-data .pill{display:none}
+
+/* the plan slide: three models, three cards */
+.s-plan .body{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.8rem;align-items:start;margin-top:2rem}
+.s-plan .mc{border-top:6px solid var(--c);padding-top:.9rem}
+.s-plan .mc .n{font-family:var(--f-display);font-size:3.2rem;line-height:.9;color:var(--c);display:block}
+.s-plan .mc h3{font-family:var(--f-display);font-weight:400;font-size:1.9rem;line-height:1.05;letter-spacing:.02em;text-transform:uppercase;margin:.4rem 0 .2rem}
+.s-plan .mc .who{font-family:var(--f-mono);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.s-plan .mc p{font-size:1.12rem;line-height:1.5;margin-top:.8rem}
+.s-plan .mc .adds{display:block;margin-top:.9rem;font-family:var(--f-mono);font-size:.78rem;letter-spacing:.06em;color:var(--text);border:1px solid var(--line);padding:.35rem .6rem}
+.s-plan .story{margin-top:.4rem}
+
+/* the summary: three reasons */
+.s-end .steps{margin-top:1.4rem;max-width:36rem}
+.s-end .steps li{font-size:1.12rem}
+.s-end .note{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.04em;color:var(--mute);margin-top:1.1rem;max-width:36rem;line-height:1.5}
+
+/* the game slides */
+.s-vote .sub,.s-res .sub{max-width:44rem;margin-top:.6rem}
+.gr-why{flex-basis:100%;font-size:.95rem;line-height:1.5;color:var(--mute);max-width:62rem}
+.s-model .tiles .credit{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:900px){
   .slide{padding:1.6rem 1.2rem 4rem;overflow:auto}
@@ -505,10 +537,9 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
   </div>
 </section>
 
-<!-- 2 -->
 <section class="slide s-problem" id="s2">
-  <p class="eyebrow"><b>Why it matters</b><i></i>NTSB investigations</p>
-  <h2>Pipelines fail where <em>nobody can see</em></h2>
+  <p class="eyebrow"><b>1 · The problem</b><i></i>Why it matters</p>
+  <h2>The cause of a pipeline failure is hidden in <em>a written report</em></h2>
   <div class="body">
     <div class="cases">
       <div class="case"><div class="where">San Bruno, California · 2010</div>
@@ -517,35 +548,16 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
       <div class="case"><div class="where">Carlsbad, New Mexico · 2000</div>
         <div class="nums"><div><span class="big" data-count="12">12</span><span class="lab">deaths</span></div></div>
         <p>Investigators blamed severe internal corrosion.</p></div>
-      <p class="file">After every incident, the operator files a written report within <b>30 days</b>, and the cause is described somewhere in that text.</p>
+      <p class="file">After every incident, the operator writes a report within <b>30 days</b>. Reading thousands of them by hand is slow, so we asked whether a model could read each report and name the cause.</p>
     </div>
     <div class="photo"><div class="frame"><img data-img="corr" alt="Corrosion pit in the wall of a buried steel gas pipeline, before and after blasting">
       <p class="credit">Corrosion pit in a buried gas pipeline. Illustration only, not either incident above. Photo: Cafe Nervosa / D. Mawhinney, CC BY-SA 3.0, Wikimedia Commons.</p></div></div>
   </div>
 </section>
 
-<!-- 3 -->
-<section class="slide s-data" id="s3">
-  <p class="eyebrow"><b>The data</b><i></i>PHMSA gas transmission and gathering incidents</p>
-  <h2>The data holds 3,044 reports, and each has one of <em>eight</em> causes</h2>
-  <div class="body">
-    <div class="facts">
-      <div><span class="big" data-count="3044">3,044</span><span class="lab" style="display:block;margin-top:.3rem">narratives, all usable</span></div>
-      <div class="row">
-        <div><span class="big" data-count="136">136</span><span class="lab" style="display:block">median words</span></div>
-        <div><span class="big">2001–2026</span><span class="lab" style="display:block">report years</span></div>
-      </div>
-      <p class="credit src">The reports come from the U.S. DOT PHMSA incident file (Form F 7100.2). The file for 2010 to the present has 623 fields, and we kept six of them. We merged in the 2002 to 2009 file and mapped its older cause labels to today's eight causes. The model reads only the narrative.</p>
-      <span class="pill" style="color:var(--text)">The proposal counted 3,027 reports, and the final file has 3,044.</span>
-    </div>
-    <div class="bars" id="classbars"></div>
-  </div>
-</section>
-
-<!-- 4 -->
 <section class="slide s-cause" id="s4">
-  <p class="eyebrow"><b>The labels</b><i></i>Drag the cards, click one, or use the arrows.</p>
-  <h2>Operators describe each cause in <em>their own words</em></h2>
+  <p class="eyebrow"><b>1 · The problem</b><i></i>Drag the cards to read real examples</p>
+  <h2>For every report, the model must pick <em>one of eight causes</em></h2>
   <div class="body">
     <div class="ring-stage" id="ringstage">
       <div class="ring" id="ring"></div>
@@ -554,15 +566,31 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
   </div>
 </section>
 
-<!-- 5 -->
+<section class="slide s-data" id="s3">
+  <p class="eyebrow"><b>2 · The data and the test</b><i></i>The reports</p>
+  <h2>We have <em>3,044</em> real reports, and some causes are much rarer than others</h2>
+  <div class="body">
+    <div class="facts">
+      <div><span class="big" data-count="3044">3,044</span><span class="lab" style="display:block;margin-top:.3rem">reports, each with a written narrative</span></div>
+      <div class="row">
+        <div><span class="big" data-count="136">136</span><span class="lab" style="display:block">words in a typical report</span></div>
+        
+      </div>
+      <p class="credit src">The reports come from the public incident file of the U.S. Department of Transportation (PHMSA). The model reads only the written narrative.</p>
+      <div class="story" style="--c:var(--stamp)"><span class="k">Why this matters</span><p>Equipment failure is about five times more common than incorrect operation. A model could look accurate just by guessing the common causes, so we have to deal with this imbalance.</p></div>
+    </div>
+    <div class="bars" id="classbars"></div>
+  </div>
+</section>
+
 <section class="slide s-flow" id="s5">
-  <p class="eyebrow"><b>Experiment design</b><i></i>Every model sees the same data.</p>
-  <h2>All three models share one split and <em>two ways</em> of handling imbalance</h2>
+  <p class="eyebrow"><b>2 · The data and the test</b><i></i>How we test fairly</p>
+  <h2>Every model is tested on <em>reports it has never seen</em></h2>
   <div class="body">
     <div class="split">
       <div class="splitbar"><div class="sb-train"><b>2,130</b>train 70%</div><div class="sb-val"><b>456</b>val</div><div class="sb-test"><b>458</b>test</div></div>
-      <p class="credit">The split is stratified with seed 42, and the validation and test sets are identical in both experiments.</p>
-      <p class="xnote" style="min-height:0">Before splitting, we remove extra whitespace and HTML artifacts and lowercase all text.</p>
+      <p class="credit">We split the reports once, and all three models use the same split. We tune on the validation reports and use the test reports only once, at the end.</p>
+      <div class="story" style="--c:var(--stamp)"><span class="k">Why two experiments</span><p>Rare causes are easy for a model to ignore. We tried two different fixes, class weights and synthetic reports, and compared them.</p></div>
       <div class="models3">
         <span class="pill" style="--c:var(--gru)"><i class="dot" style="background:var(--gru)"></i>BiGRU + FastText</span>
         <span class="pill" style="--c:var(--lstm)"><i class="dot" style="background:var(--lstm)"></i>BiLSTM + attention + FastText</span>
@@ -578,13 +606,26 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
   </div>
 </section>
 
-<!-- 6 -->
+<section class="slide s-plan" id="splan">
+  <p class="eyebrow"><b>3 · The models</b><i></i>Our plan</p>
+  <h2>We tried three models, and each one adds <em>a new idea</em></h2>
+  <div class="body">
+    <div class="mc" style="--c:var(--gru)"><span class="n">1</span><h3>BiGRU</h3><span class="who">Parva</span>
+      <p>It reads a report word by word, in both directions. It is simple and fast, so it is our baseline.</p><span class="adds">Adds: reading order</span></div>
+    <div class="mc" style="--c:var(--lstm)"><span class="n">2</span><h3>BiLSTM with attention</h3><span class="who">Muhammad</span>
+      <p>It adds attention, so the model can focus on key words like “corrosion” or “backhoe” in a long report.</p><span class="adds">Adds: focus on key words</span></div>
+    <div class="mc" style="--c:var(--bert)"><span class="n">3</span><h3>Frozen BERT</h3><span class="who">Sakina</span>
+      <p>It already understands English from pretraining, so we train only a small layer on top of it.</p><span class="adds">Adds: prior knowledge of language</span></div>
+    <div class="story wide" style="--c:var(--stamp)"><span class="k">Why this order</span><p>All three read the same reports, so any difference in the results comes from the model and not from the data. We start with the simplest model and add one idea at a time.</p></div>
+  </div>
+</section>
+
 <section class="slide s-model" id="s6" style="--c:var(--gru)">
-  <p class="eyebrow"><b>Model 1</b><i></i>BiGRU + FastText</p>
-  <h2>The BiGRU reads each narrative in <em>both directions</em></h2>
+  <p class="eyebrow"><b>3 · The models</b><i></i>Model 1 of 3: BiGRU</p>
+  <h2>The BiGRU is our <em>simple baseline</em></h2>
   <div class="body">
     <div>
-      <div class="arch" id="arch-gru"></div>
+      <div class="arch" id="arch-gru"></div><div class="story" style="--c:var(--gru)"><span class="k">Why we chose it</span><p>A GRU reads a report one word at a time, in both directions, so every word can use the words on either side of it. It is simple and fast, which makes it a good baseline.</p></div><div class="story" style="--c:var(--gru)"><span class="k">How we set it up</span><p>We froze the FastText word vectors because they already know English, including rare technical words. We used dropout and early stopping so that the model does not memorize the training reports.</p></div>
       <dl class="specs">
         <dt>Embeddings</dt><dd>FastText, 300-d, frozen</dd>
         <dt>Recurrent</dt><dd>2 layers · 128 hidden per direction</dd>
@@ -592,19 +633,18 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
         <dt>Stopping</dt><dd>patience 5 · grad clip 5 · seed 42</dd>
         <dt>Input</dt><dd>up to 300 tokens</dd>
       </dl>
-      <p class="callout" style="--c:var(--gru)">Oversampling lifted accuracy <b>7.6 points</b> but macro-F1 by only <b>0.007</b>. Incorrect-operation recall fell from <b>0.32 to 0.12</b>.</p>
+      <p class="callout" style="--c:var(--gru)">Synthetic reports raised accuracy by <b>7.6 points</b>, but macro-F1 rose by only <b>0.007</b>, and recall for incorrect operation fell from <b>0.32 to 0.12</b>.</p>
     </div>
     <div class="tiles" id="tiles-gru"></div>
   </div>
 </section>
 
-<!-- 7 -->
 <section class="slide s-model" id="s7" style="--c:var(--lstm)">
-  <p class="eyebrow"><b>Model 2</b><i></i>BiLSTM + attention + FastText</p>
-  <h2>The BiLSTM learns <em>which words</em> carry the cause</h2>
+  <p class="eyebrow"><b>3 · The models</b><i></i>Model 2 of 3: BiLSTM with attention</p>
+  <h2>The BiLSTM adds attention to <em>focus on key words</em></h2>
   <div class="body">
     <div>
-      <div class="arch" id="arch-lstm"></div>
+      <div class="arch" id="arch-lstm"></div><div class="story" style="--c:var(--lstm)"><span class="k">Why we chose it</span><p>Reports are long, about a thousand characters on average. Attention lets the model give more weight to the few words that point to the cause, such as “corrosion” or “backhoe”, wherever they appear.</p></div><div class="story" style="--c:var(--lstm)"><span class="k">How we set it up</span><p>We gave it the same settings as the BiGRU, so any difference between the two comes from attention and not from tuning.</p></div>
       <dl class="specs">
         <dt>Embeddings</dt><dd>FastText, 300-d, frozen</dd>
         <dt>Recurrent</dt><dd>2 layers · 128 hidden per direction</dd>
@@ -612,33 +652,31 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
         <dt>Training</dt><dd>Adam · lr 1e-3 · batch 32 · dropout 0.3</dd>
         <dt>Same setup as BiGRU</dt><dd>fair RNN comparison</dd>
       </dl>
-      <p class="callout" style="--c:var(--lstm)">This is the better of the two recurrent models, and it has the highest corrosion F1 of any run (<b>0.729</b>, with <b>0.805</b> precision). Oversampling cost it <b>0.067</b> macro-F1.</p>
+      <p class="callout" style="--c:var(--lstm)">This is the better of the two recurrent models, and it has the best corrosion score of any run (F1 <b>0.729</b>). Synthetic reports lowered its macro-F1 by <b>0.067</b>.</p>
     </div>
     <div class="tiles" id="tiles-lstm"></div>
   </div>
 </section>
 
-<!-- 8 -->
 <section class="slide s-bert" id="s8">
-  <p class="eyebrow"><b>Model 3</b><i></i>bert-base-uncased, frozen</p>
-  <h2>We keep BERT frozen and <em>train only one small head</em></h2>
+  <p class="eyebrow"><b>3 · The models</b><i></i>Model 3 of 3: frozen BERT</p>
+  <h2>BERT already understands English, so we <em>train only a small layer</em></h2>
   <div class="body">
     <div class="stage3d" id="stage3d"><div class="stack" id="stack"></div></div>
     <div class="legend3d">
-      <div class="row"><i class="sw" style="background:var(--paper)"></i><div>Narrative, up to <b>512</b> tokens</div></div>
-      <div class="row"><i class="sw" style="background:rgba(160,190,200,.55)"></i><div><b>12 layers</b>, 12 heads, 768-d. All weights frozen.</div></div>
-      <div class="row"><i class="sw" style="background:var(--gru)"></i><div>One 768-number vector per narrative</div></div>
-      <div class="row"><i class="sw" style="background:var(--bert)"></i><div>Linear head 768 → 8. <b>6,152</b> trainable weights, against 903,688 in the BiLSTM.</div></div>
+      <div class="row"><i class="sw" style="background:var(--paper)"></i><div>The report goes in. BERT can read up to <b>512</b> tokens at once.</div></div>
+      <div class="row"><i class="sw" style="background:rgba(160,190,200,.55)"></i><div>BERT's <b>12 layers</b> read it. We never change them, because they were already trained on a huge amount of text.</div></div>
+      <div class="row"><i class="sw" style="background:var(--gru)"></i><div>The layers turn the report into one list of 768 numbers.</div></div>
+      <div class="row"><i class="sw" style="background:var(--bert)"></i><div>Only this small layer is trained. It has <b>6,152</b> weights, against 903,688 in the BiLSTM.</div></div>
       <dl class="specs" style="margin-top:.4rem"><dt>Training</dt><dd>AdamW · lr 2e-3 · batch 16</dd><dt>Stopping</dt><dd>patience 5 on val macro-F1</dd></dl>
-      <p class="hint">DRAG TO ROTATE · HOVER A LAYER</p>
+      <div class="story" style="--c:var(--bert)"><span class="k">Why we kept BERT frozen</span><p>With only 3,044 reports, training a small layer is safer than retraining all 110 million weights, and it is fast. We used a higher learning rate than for the other models because only that small layer is learning.</p></div><p class="hint">DRAG TO ROTATE · HOVER A LAYER</p>
     </div>
   </div>
 </section>
 
-<!-- 9 -->
 <section class="slide s-pool" id="s9">
-  <p class="eyebrow"><b>Model 3</b><i></i>Class-weighted loss, test set</p>
-  <h2>How we summarize the narrative changed macro-F1 by <em>0.25</em></h2>
+  <p class="eyebrow"><b>3 · The models</b><i></i>The choice that mattered most</p>
+  <h2>How BERT summarizes a report <em>changed the score by 0.25</em></h2>
   <div class="body">
     <div>
       <div class="seg" role="group" aria-label="Pooling method"><button aria-pressed="false" data-p="pool">pooler_output ([CLS])</button><button aria-pressed="true" data-p="bert">Mean pooling</button></div>
@@ -647,64 +685,41 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
         <div><span class="big" id="pa">60.3%</span><span class="lab" style="display:block">accuracy</span></div>
       </div>
       <p class="delta" id="pdelta"></p>
-      <p class="sub" style="max-width:26rem">Both versions use the same frozen BERT, the same head and the same data. They differ only in how the narrative vector is built, either from the single [CLS] token or from the average of every token.</p>
+      <p class="sub" style="max-width:26rem">Our first plan used BERT's [CLS] token as the summary of the report, and it scored poorly. Averaging every token instead uses every word in the report and scored far better. Everything else stayed the same.</p>
     </div>
     <div><div class="lab" style="margin-bottom:.6rem">Per-cause F1 <span style="color:var(--text)">| marks the other method</span></div><div id="pcbars"></div></div>
   </div>
 </section>
 
-<!-- 10 -->
 <section class="slide s-bars" id="s10">
-  <p class="eyebrow"><b>Results</b><i></i>458 held-out test narratives</p>
-  <h2>The three best runs finish within <em>0.022</em> of each other</h2>
+  <p class="eyebrow"><b>4 · The results</b><i></i>All six runs on the test reports</p>
+  <h2>Frozen BERT scored highest, but <em>the top three are close</em></h2>
   <div class="body">
     <div class="bars3d" id="bars3d"><div class="world" id="world"></div></div>
     <div class="key3">
       <div class="seg" role="group" aria-label="Metric"><button aria-pressed="true" data-m="mf">Macro-F1</button><button aria-pressed="false" data-m="acc">Accuracy</button></div>
       <div class="row"><span class="sw2 solid"></span>Exp 1 · class weights<br><span class="sw2 hatch"></span>Exp 2 · oversampling</div>
-      <div class="row mute" style="font-size:.84rem">Macro-F1 gives each of the 8 causes equal weight. Micro-F1 equals accuracy in single-label classification, so we report accuracy.</div>
-      <div class="row mute" style="font-size:.84rem">Highest validation macro-F1 was BiGRU Exp 2 (0.586). The test ranking differs, so treat the top runs as close.</div>
+      <div class="row mute" style="font-size:.92rem">We rank the models by macro-F1, which gives all eight causes equal weight, so rare causes count as much as common ones.</div>
+      <div class="row mute" style="font-size:.92rem">The hatched bars use synthetic reports. They did not clearly help: they lowered the macro-F1 of the BiLSTM and of BERT.</div>
       <p class="hint">DRAG TO ROTATE</p>
     </div>
   </div>
 </section>
 
-<!-- 11 -->
 <section class="slide s-heat" id="s11">
-  <p class="eyebrow"><b>Per-cause results</b><i></i>Click a row to see precision and recall.</p>
-  <h2>Clear causes are <em>easy</em> to recognize, and vague ones are not</h2>
+  <p class="eyebrow"><b>4 · The results</b><i></i>Click a row to see precision and recall</p>
+  <h2>Clear causes are easy to recognize, and <em>vague ones are not</em></h2>
   <div class="body">
     <div>
       <div class="seg" role="group" aria-label="Experiment" style="margin-bottom:1rem"><button aria-pressed="true" data-e="1">Exp 1 · class weights</button><button aria-pressed="false" data-e="2">Exp 2 · oversampling</button></div>
       <div class="hm" id="hm"></div>
     </div>
-    <div class="det" id="det"></div>
+    <div class="det" id="det"></div><div class="story wide" style="--c:var(--bert)"><span class="k">What this tells us</span><p>Excavation damage is the easiest cause because its reports name the equipment, such as a backhoe or a trencher. “Other incident cause” is the hardest because its reports are vague. BERT does best on the rare causes, which is where the other two models struggle most.</p></div>
   </div>
 </section>
 
-<!-- 12 -->
-<section class="slide s-cm" id="s12">
-  <p class="eyebrow"><b>Errors</b><i></i>Each row shows how reports of one true cause were classified.</p>
-  <h2>This is where the models <em>confuse</em> one cause for another</h2>
-  <div class="body">
-    <div class="cmwrap" id="cmwrap">
-      <div class="axis" style="margin:0 0 .5rem 9.5rem">Predicted cause →</div>
-      <div class="cm" id="cm"></div>
-    </div>
-    <div class="cmside">
-      <div class="sel">
-        <div class="seg" id="cmmodel" role="group" aria-label="Model"><button aria-pressed="false" data-id="gru">BiGRU</button><button aria-pressed="false" data-id="lstm">BiLSTM</button><button aria-pressed="true" data-id="bert">BERT</button></div>
-        <div class="seg" id="cmexp" role="group" aria-label="Experiment"><button aria-pressed="true" data-e="1">Exp 1</button><button aria-pressed="false" data-e="2">Exp 2</button></div>
-      </div>
-      <p class="cmnote" id="cmnote"></p>
-      <p class="cmhover" id="cmhover">Hover a cell for the count behind it.</p>
-    </div>
-  </div>
-</section>
-
-<!-- 14 -->
 <section class="slide s-live" id="s14">
-  <p class="eyebrow"><b>The model in action</b><i></i><span id="lv-status" class="pill lv-st"><i></i>checking server</span></p>
+  <p class="eyebrow"><b>5 · Your turn</b><i></i>The model in action<span id="lv-status" class="pill lv-st"><i></i>checking server</span></p>
   <h2>Pick a report and watch the model <em>stamp</em> it</h2>
   <div class="body lv">
     <div class="lv-in">
@@ -720,8 +735,9 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
 </section>
 
 <section class="slide s-vote" id="sv">
-  <p class="eyebrow"><b>Audience game</b><i></i>Phones out<span id="gm-online" class="pill lv-st"><i></i>connecting</span></p>
+  <p class="eyebrow"><b>5 · Your turn</b><i></i>Audience game<span id="gm-online" class="pill lv-st"><i></i>connecting</span></p>
   <h2>Can you beat the <em>model?</em></h2>
+  <p class="sub">We want to see how hard this task is for a person, because that tells us whether our model's score is good.</p>
   <div class="body gv">
     <div class="gv-left">
       <ol class="steps">
@@ -743,7 +759,7 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
 </section>
 
 <section class="slide s-res" id="sr">
-  <p class="eyebrow"><b>Humans vs the model</b><i></i>Live results<span id="gm-online2" class="pill lv-st"><i></i>connecting</span></p>
+  <p class="eyebrow"><b>5 · Your turn</b><i></i>Live results<span id="gm-online2" class="pill lv-st"><i></i>connecting</span></p>
   <h2>Here is how <em>the room</em> did against the model</h2>
   <div class="body gr">
     <div class="gr-cols" id="gr-cols"></div>
@@ -753,17 +769,17 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
       <span class="gr-score" id="gr-score"></span>
       <span id="gr-verdict"></span>
       <span class="gr-legend lab"><i class="lg t">✓</i> marks the correct answer, <i class="lg m">M</i> marks the model's answer, and each bar shows how many people chose it.</span>
+      <span class="gr-why">Why we ask: when people disagree about one report, the task is ambiguous, and that limits every model, not only ours.</span>
     </div>
   </div>
 </section>
 
-<!-- 16 -->
 <section class="slide s-end" id="s16">
-  <p class="eyebrow"><b>Summary</b><i></i>Team 1</p>
+  <p class="eyebrow"><b>6 · The takeaway</b><i></i>Team 1</p>
   <div class="body">
     <div>
-      <h2>Every incident has a moment of <em>truth</em></h2>
-      <p class="lede" style="font-size:1.45rem;margin-top:1.6rem;max-width:34rem">Frozen BERT with mean pooling performed best, and how we pooled the vectors mattered more than which architecture we chose.</p><p class="lede" style="font-size:1.2rem;margin-top:1rem">Thank you for listening, and we are happy to take your questions.</p>
+      <h2>Frozen BERT worked best, and <em>here is why</em></h2>
+      <ol class="steps"><li><div>It already understands English, so only a small layer had to learn from our 3,044 reports.</div></li><li><div>It generalized best: its score dropped the least from validation to test, and it was strongest on the rare causes.</div></li><li><div>How we summarize each report mattered most: averaging every token beat the [CLS] token by 0.25 macro-F1.</div></li></ol><p class="note">We ran each model once on 458 test reports, so small gaps between the top runs are not reliable.</p><p class="lede" style="font-size:1.15rem;margin-top:1rem">Thank you for listening, and we are happy to take your questions.</p>
       <p class="credit" style="margin-top:2.2rem;max-width:40rem">Data: U.S. DOT PHMSA public incident reports. Photos: Wikimedia Commons (CC BY-SA 2.0 to 4.0) and NTSB (public domain); per-photo credits are on the cause cards and in the project repository.</p>
     </div>
     <div class="kpis">
@@ -773,9 +789,28 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
     </div>
   </div>
 </section>
+
+<section class="slide s-cm" id="s12">
+  <p class="eyebrow"><b>Appendix</b><i></i>Where the models confuse causes</p>
+  <h2>This is where the models <em>confuse</em> one cause for another</h2>
+  <div class="body">
+    <div class="cmwrap" id="cmwrap">
+      <div class="axis" style="margin:0 0 .5rem 9.5rem">Predicted cause →</div>
+      <div class="cm" id="cm"></div>
+    </div>
+    <div class="cmside">
+      <div class="sel">
+        <div class="seg" id="cmmodel" role="group" aria-label="Model"><button aria-pressed="false" data-id="gru">BiGRU</button><button aria-pressed="false" data-id="lstm">BiLSTM</button><button aria-pressed="true" data-id="bert">BERT</button></div>
+        <div class="seg" id="cmexp" role="group" aria-label="Experiment"><button aria-pressed="true" data-e="1">Exp 1</button><button aria-pressed="false" data-e="2">Exp 2</button></div>
+      </div>
+      <p class="cmnote" id="cmnote"></p>
+      <p class="cmhover" id="cmhover">Hover a cell for the count behind it.</p>
+    </div>
+  </div>
+</section>
 </main>
 
-<aside id="notes" aria-live="polite"><div><h4 id="nhead"></h4><ul id="nlist"></ul></div><div id="timer">0:00<small>TARGET 12:00 · LIMIT 13:00</small></div></aside>
+<aside id="notes" aria-live="polite"><div><h4 id="nhead"></h4><ul id="nlist"></ul></div><div id="timer">0:00<small>TARGET 12:30 · LIMIT 15:00</small></div></aside>
 
 <nav id="hud" aria-label="Slides">
   <button class="nav" id="prev" aria-label="Previous slide">&#8592;</button>
@@ -804,22 +839,23 @@ $$('[data-img]').forEach(e=>e.src=IMG[e.dataset.img]);
 
 /* ---------- script / timing ---------- */
 const PLAN=[
- {w:'sakina',t:20,title:'Title',say:['Introduce the team by name here, the only slide with names. Team 1: we classify gas transmission and gathering pipeline incident causes from the operator narrative.','Three of us, three model families. Each of us covers our own model, and we share the data and the results.']},
- {w:'sakina',t:45,title:'Why it matters',say:['San Bruno 2010: 8 deaths, 58 injured, 38 homes destroyed. The NTSB traced it to a defective seam weld.','Carlsbad 2000: 12 deaths, severe internal corrosion.','Operators must file a report within 30 days. The cause sits in free text, and reading thousands by hand is slow.','The photo is an illustration of corrosion, not either incident.']},
- {w:'parva',t:40,title:'The data',say:['Public PHMSA gas transmission and gathering data. We merged 2002 to 2009 with 2010 to present and mapped older cause labels to the current eight.','3,044 narratives, all usable, median 136 words. The proposal said 3,027; the final PHMSA file we trained on has 3,044 and no records were dropped. The 2010 to present file has 623 fields and we kept six.','Imbalanced: equipment failure is 25.9%, incorrect operation 5.4%. The model sees the narrative only, never the operator name.']},
- {w:'parva',t:20,title:'The eight causes',say:['Real excerpts, spin the ring.','Contrast two: the excavation card names a backhoe, easy language. Other incident cause reads like gas bubbles on water, which is vague. That is a preview of the per-cause results.']},
- {w:'parva',t:35,title:'Experiment design',say:['Stratified 70/15/15, seed 42: 2,130 train, 456 validation, 458 test. Identical for all three models.','Cleaning first: whitespace and HTML artifacts removed, lowercased.','Exp 1: class-weighted loss on the original training set.','Exp 2: add 681 validated synthetic narratives for the six smaller causes so every cause has at least 300 rows, 2,811 in total. Toggle the buttons to show it.']},
- {w:'parva',t:70,title:'BiGRU',say:['Frozen FastText vectors, 2-layer bidirectional GRU, 128 hidden per direction, 256 after concatenation.','Exp 1: 52.4% accuracy, 0.468 macro-F1. Exp 2: 60.0% accuracy, 0.475 macro-F1.','Accuracy jumped 7.6 points but macro-F1 barely moved: the gain came from large classes. Incorrect operation recall dropped from 0.32 to 0.12.','Hand over to Muhammad: same setup with attention.']},
- {w:'muhammad',t:75,title:'BiLSTM + attention',say:['Same embeddings and sizes as the BiGRU so the two RNNs are compared fairly. Attention weights each word before the classifier.','903,688 trainable weights.','Exp 1: 56.8% accuracy, 0.535 macro-F1, best RNN. Highest corrosion F1 of any run, 0.729 with 0.805 precision.','Exp 2 dropped to 0.468. Other incident cause fell from 0.245 to 0.042.','Hand over to Sakina.']},
- {w:'sakina',t:50,title:'Frozen BERT',say:['bert-base-uncased, 12 layers, completely frozen. We train only a linear head: 768 to 8, 6,152 weights, against 903,688 in the BiLSTM.','Max length 512 tokens, AdamW, learning rate 2e-3, batch 16.','Drag the stack to show the layers.']},
- {w:'sakina',t:60,title:'Pooling result',say:['The original design used the [CLS] vector through the pooler. Result: 0.305 macro-F1, 39.1% accuracy.','Averaging all token vectors instead: 0.553 macro-F1, 60.3% accuracy. Everything else identical.','With BERT frozen, [CLS] was never trained for this task, so one token is a weak summary of a 136-word narrative. Click Other incident cause: 0.000 to 0.281.','This is a measured difference, not a tested explanation.']},
- {w:'muhammad',t:55,title:'Head to head',say:['How we score: macro-F1 is primary because classes are imbalanced. It averages the 8 per-cause F1 values equally. We also report accuracy and per-cause precision, recall, F1.','Best test macro-F1: BERT mean pooling Exp 1, 0.553. Then BiLSTM Exp 1, 0.535, and BERT Exp 2, 0.531.','Top three within about 0.02. Best validation macro-F1 was BiGRU Exp 2, 0.586, so the ranking is not clear-cut.','BERT with pooler_output is last.']},
- {w:'parva',t:55,title:'Per-cause F1',say:['Precision: when it predicts a cause, how often is it right. Recall: how many true cases it finds.','Easiest: excavation damage, about 0.77 to 0.79 for all three models. Corrosion and equipment follow.','Hardest: other incident cause, 0.11 to 0.28, and incorrect operation. Click the row to show precision and recall.','Rare classes have 25 to 31 test rows, so these scores move a lot.']},
- {w:'muhammad',t:50,title:'Confusion matrix',say:['Row percentages, so each row is the share of that true cause.','BERT Exp 1: 69% of corrosion reports are right, but 20% are called material failure. Equipment is confused with material failure and incorrect operation.','Incorrect operation goes to equipment failure 28% of the time. Switch models to show the pattern is shared.']},
- {w:'sakina',t:55,title:'App and live demo',say:['The demo is on this slide, so there is no need to switch windows. Pick one of the eight reports; these are the real saved outputs of the model on held-out test reports.','Show the stamped cause and confidence, the photo, then SHAP shading. SHAP takes 15 to 40 seconds, so start it, then talk.','App uses frozen BERT, mean pooling, Exp 1 settings. Head retrained locally: 57.9% accuracy, 0.522 macro-F1.']},
- {w:'muhammad',t:40,title:'Beat the model',say:['Ask everyone to take out their phones and scan the code.','Explain that the report comes from the test set and that the model has never seen it.','Watch the counter, and move on when it stops growing.']},
- {w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the correct answer and the answer the model gave.','Point out where the room split and how confident the model was.','Press Shift+X afterwards to wipe the votes for a fresh run.']},
- {w:'all',t:10,title:'Close',say:['Best: frozen BERT with mean pooling, 0.553 macro-F1 and 60.3% accuracy. Pooling choice alone was worth 0.25. Rare causes remain the hard part.','Thank you. Questions?']}
+ {w:"sakina",t:20,title:"Title",say:["Introduce the team and the three models: Parva built the BiGRU, Muhammad the BiLSTM with attention, and Sakina the frozen BERT.", "Tell the audience the plan: the problem, the data, the three models, the results, and then a short game."]},
+ {w:"sakina",t:50,title:"The problem",say:["Pipeline failures can be deadly. San Bruno in 2010 killed 8 people, and Carlsbad in 2000 killed 12.", "After every incident the operator writes a report, and the cause is described somewhere in that text.", "Our question is whether a model can read the report and name the cause automatically."]},
+ {w:"parva",t:30,title:"The eight causes",say:["The model must choose one of eight causes for each report. Drag the cards to read two or three real examples.", "Point out that excavation reports name a backhoe, while some other reports are vague. This matters later."]},
+ {w:"parva",t:45,title:"The data",say:["We have 3,044 real reports from the public PHMSA incident file, and the model reads only the narrative.", "The causes are very uneven. Equipment failure has 787 reports and incorrect operation has 165.", "That is why a model could look accurate by guessing common causes, and why we need to handle the imbalance."]},
+ {w:"parva",t:50,title:"The test",say:["We split the reports once, 70 / 15 / 15, and all three models use that split, so the comparison is fair.", "The validation reports are for tuning and for stopping training early. The test reports are used only once, at the end.", "To handle the imbalance we ran two experiments: class weights, and synthetic reports written by an AI assistant from training reports only."]},
+ {w:"sakina",t:45,title:"Our three models",say:["We introduce the models in the order we tried them, and each one adds one idea.", "The BiGRU is the simple baseline, the BiLSTM adds attention for long reports, and BERT brings prior knowledge of English.", "All three read the same reports, so differences come from the model."]},
+ {w:"parva",t:55,title:"BiGRU",say:["Why we chose it: it is simple and fast, so it shows what a basic model can do.", "Settings and why: FastText vectors are frozen because they already know English, including technical words. Dropout of 0.3 and early stopping on validation macro-F1 stop it from memorizing the training reports. Adam with a learning rate of 0.001 is the usual starting point for recurrent models.", "Result: 52.4 percent accuracy and 0.468 macro-F1 with class weights. Synthetic reports raised accuracy but not macro-F1, and recall for incorrect operation fell."]},
+ {w:"muhammad",t:55,title:"BiLSTM with attention",say:["Why we chose it: reports are long, about a thousand characters, and attention lets the model focus on the words that point to the cause.", "Settings and why: exactly the same settings as the BiGRU, so any difference comes from attention and not from tuning.", "Result: 56.8 percent accuracy and 0.535 macro-F1. It is the better recurrent model and has the best corrosion score of any run."]},
+ {w:"sakina",t:55,title:"Frozen BERT",say:["Why we chose it: BERT has already read a huge amount of English, so we only train a small layer on top. That layer has 6,152 weights, against 903,688 in the BiLSTM.", "Why frozen: with only 3,044 reports, training a small layer is safer than retraining 110 million weights, and training is fast.", "Why the learning rate is higher: only the small layer is learning, so 0.002 is fine. Training stopped early on validation macro-F1, like the other models."]},
+ {w:"sakina",t:50,title:"The pooling choice",say:["This was the choice that mattered most. Our first plan used the [CLS] token as the summary, and it scored 0.305 macro-F1.", "Averaging every token gave 0.553, a gain of 0.25, with the same model, head and data.", "The lesson is that how you summarize the report mattered more than which model we picked."]},
+ {w:"muhammad",t:60,title:"Head to head",say:["We rank by macro-F1 because it gives all eight causes equal weight, so rare causes count as much as common ones.", "Frozen BERT with mean pooling is first at 0.553, with 60.3 percent accuracy. The top three runs are within 0.022, and each is a single run, so be honest that the gap is small.", "Synthetic reports did not clearly help. They lowered the macro-F1 of the BiLSTM and of BERT, and only raised BiGRU accuracy."]},
+ {w:"muhammad",t:50,title:"Per-cause results",say:["Excavation damage is easiest because its reports name the equipment. Other incident cause is hardest because its reports are vague.", "BERT is strongest on the rare causes, and that is where the other two struggle most. This is the main reason it won.", "BERT also dropped the least from validation to test, which suggests it generalizes better."]},
+ {w:"sakina",t:30,title:"The model in action",say:["This is the real model on a real test report. Pick one, and the model stamps a cause and shows its confidence.", "The shaded words show which words pushed the model toward its answer. If you are running late, skip this slide."]},
+ {w:"muhammad",t:40,title:"Beat the model",say:["Ask everyone to take out their phones and scan the code.", "Say why we play: we want to see how hard this task is for a person, because that tells us whether our model's score is good.", "The report comes from the test set, so the model has never seen it. Watch the counter, and move on when it stops growing."]},
+ {w:"muhammad",t:80,title:"Crowd vs model",say:["Press V or click Reveal to show the correct answer and the model's answer.", "Whatever the result, tie it back to the findings: if people disagree, the labels are ambiguous, and that limits every model, not just ours.", "One report is only an illustration, not evidence. Press Shift+X afterwards to wipe the votes."]},
+ {w:"all",t:30,title:"Summary",say:["Frozen BERT with mean pooling worked best: 0.553 macro-F1 and 60.3 percent accuracy.", "Three reasons: it already understands English, it generalized best, and the way we summarized each report mattered most.", "The caveat is that each model ran once on 458 test reports, so small gaps are not reliable. Then thank the audience and take questions."]},
+ {w:"muhammad",t:0,title:"Appendix: errors",say:["Backup slide for questions. Each row shows how reports of one true cause were classified.", "For BERT with class weights, 69 percent of corrosion reports are right but 20 percent are called material failure. Incorrect operation is called equipment failure 28 percent of the time."]}
 ];
 const total=PLAN.reduce((a,b)=>a+b.t,0);
 const mmss=s=>Math.floor(s/60)+':'+String(Math.round(s%60)).padStart(2,'0');
@@ -959,7 +995,7 @@ dragRot($('#ringstage'),(ph,dx)=>{
       $('.real',r).style.width=(real/max*100)+'%'; $('.syn',r).style.width=(syn/max*100)+'%';
       $('.v',r).textContent=(real+syn);
     });
-    note.innerHTML=x===1?'<b>Exp 1</b> trains on the 2,130 original rows. The loss is weighted so rare causes count more.':'<b>Exp 2</b> adds <b>681 validated synthetic narratives</b> (hatched), written by an AI assistant from training reports only, for six smaller causes. Every cause reaches 300 rows. 2,811 in total, plain loss.';
+    note.innerHTML=x===1?'<b>Experiment 1</b> uses the 2,130 original training reports. The loss counts mistakes on rare causes more heavily, so the model cannot ignore them.':'<b>Experiment 2</b> adds <b>681 synthetic reports</b> (hatched), which an AI assistant wrote from training reports only. Each of the six smaller causes reaches 300 reports, and the loss is not weighted.';
   }
   $$('.seg button[data-x]').forEach(b=>b.onclick=()=>{x=+b.dataset.x;$$('.seg button[data-x]').forEach(o=>o.setAttribute('aria-pressed',o===b));draw()});
   draw();
@@ -1333,11 +1369,11 @@ function onEnter(n){
   if(n===0)playStamp();
   const s=slides[n];
   $$('[data-count]',s).forEach(countUp);
-  if(n===3)startAuto(); else stopAuto();
-  if(n===2){$$('.fill',s).forEach(f=>{const w=f.style.width;f.style.width='0';requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=w))})}
-  if(n===9&&window._barsReset)window._barsReset();
-  if(n===12&&window._lvEnter)window._lvEnter();
-  if(n===13||n===14)gameEnter();else gameLeave();
+  if(s.id==='s4')startAuto(); else stopAuto();
+  if(s.id==='s3'){$$('.fill',s).forEach(f=>{const w=f.style.width;f.style.width='0';requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=w))})}
+  if(s.id==='s10'&&window._barsReset)window._barsReset();
+  if(s.id==='s14'&&window._lvEnter)window._lvEnter();
+  if(s.id==='sv'||s.id==='sr')gameEnter();else gameLeave();
 }
 
 /* ---------- 3D scene ---------- */
@@ -1369,7 +1405,7 @@ function camTo(n){if(cam)cam.go(n)}
   for(let x=X0+2;x<X0+L;x+=4.5){const t=new THREE.Mesh(new THREE.TorusGeometry(.8,.07,8,40),new THREE.MeshStandardMaterial({color:0x5b5750,roughness:.7}));t.rotation.y=Math.PI/2;t.position.set(x,.15,0);scene.add(t)}
   /* stakes, one per slide */
   const stakes=[];const stakeM=()=>new THREE.MeshStandardMaterial({color:0xd8291f,emissive:0x400a07,roughness:.6});
-  for(let i=0;i<16;i++){const g=new THREE.Group();const post=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,3.4,8),stakeM());post.position.y=2.6;g.add(post);const flag=new THREE.Mesh(new THREE.BoxGeometry(.7,.38,.03),stakeM());flag.position.set(.38,3.9,0);g.add(flag);g.position.set(i*4.6+2.2,.1,.9);scene.add(g);stakes.push(g)}
+  for(let i=0;i<24;i++){const g=new THREE.Group();const post=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,3.4,8),stakeM());post.position.y=2.6;g.add(post);const flag=new THREE.Mesh(new THREE.BoxGeometry(.7,.38,.03),stakeM());flag.position.set(.38,3.9,0);g.add(flag);g.position.set(i*4.6+2.2,.1,.9);scene.add(g);stakes.push(g)}
   /* dust */
   const pg=new THREE.BufferGeometry(),pn=420,pa=new Float32Array(pn*3);
   for(let i=0;i<pn;i++){pa[i*3]=X0+Math.random()*L*.6;pa[i*3+1]=-3+Math.random()*9;pa[i*3+2]=-2+Math.random()*12}

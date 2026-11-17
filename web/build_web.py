@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT / "app"))
 from causes import CAUSES, LABELS  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from copy_edits import EDITS  # noqa: E402
+from copy_edits import EDITS, ORDER, PLAN, PLAN_SLIDE  # noqa: E402
 
 SITE = "https://momentofgroundtruth.netlify.app"
 PLAY_URL = SITE + "/play/"
@@ -142,7 +142,7 @@ def main() -> None:
 
     marker = "@media (prefers-reduced-motion:reduce)"
     assert marker in html
-    html = html.replace(marker, read("live_slide.css") + read("stamp_anim.css") + read("game.css") + read("deck_fixes.css") + marker, 1)
+    html = html.replace(marker, read("live_slide.css") + read("stamp_anim.css") + read("game.css") + read("deck_fixes.css") + read("story.css") + marker, 1)
 
     start = html.index("/* ---------- slide 14 app ---------- */")
     end = html.index("/* ---------- enter hooks ---------- */")
@@ -166,22 +166,29 @@ def main() -> None:
     assert "e.target.matches('input')" in html
     html = html.replace("e.target.matches('input')", "e.target.matches('input,textarea')", 1)
 
-    # the speaker plan: two new entries after the live demo, before the close
-    new_plan = (
-        "{w:'muhammad',t:40,title:'Beat the model',say:['Ask everyone to take out their phones and scan the code.','Explain that the report comes from the test set and that the model has never seen it.','Watch the counter, and move on when it stops growing.']},\n "
-        "{w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the correct answer and the answer the model gave.','Point out where the room split and how confident the model was.','Press Shift+X afterwards to wipe the votes for a fresh run.']},\n "
-    )
-    html, n = re.subn(r"(\{w:'all',t:\d+,title:'Close')", lambda m: new_plan + m.group(1), html, count=1)
-    assert n == 1, "plan entry not found"
+    # the speaker plan, in the order of the story
+    start = html.index("const PLAN=[")
+    end = html.index("const total=PLAN.reduce")
+    assert len(PLAN) == len(ORDER), "PLAN and ORDER must have the same length"
+    items = [
+        "{w:%s,t:%d,title:%s,say:%s}" % (json.dumps(w), t, json.dumps(title, ensure_ascii=False), json.dumps(say, ensure_ascii=False))
+        for w, t, title, say in PLAN
+    ]
+    nl = chr(10)
+    html = html[:start] + "const PLAN=[" + nl + " " + ("," + nl + " ").join(items) + nl + "];" + nl + html[end:]
+
+    # the slides, in the order of the story (the plan slide is new, the rest come from the deck)
+    sec_re = re.compile(r'<section class="slide [^"]*" id="([^"]+)"[^>]*>.*?</section>', re.S)
+    found = list(sec_re.finditer(html))
+    blocks = {m.group(1): m.group(0) for m in found}
+    blocks["splan"] = PLAN_SLIDE
+    assert set(blocks) == set(ORDER), f"slide ids differ from ORDER: {set(blocks) ^ set(ORDER)}"
+    html = html[: found[0].start()] + (chr(10) * 2).join(blocks[i] for i in ORDER) + html[found[-1].end() :]
 
     html = html.replace("function onEnter(n){", "function onEnter(n){" + chr(10) + "  if(n===0)playStamp();", 1)
-    hook = "if(n===9&&window._barsReset)window._barsReset();"
+    hook = "if(s.id==='s10'&&window._barsReset)window._barsReset();"
     assert hook in html
-    html = html.replace(hook, hook + chr(10) + "  if(n===12&&window._lvEnter)window._lvEnter();" + chr(10) + "  if(n===13||n===14)gameEnter();else gameLeave();", 1)
-
-    old = "Switch to the live app. Paste or pick a real test narrative."
-    assert old in html
-    html = html.replace(old, "The demo is on this slide, so there is no need to switch windows. Pick one of the eight reports; these are the real saved outputs of the model on held-out test reports.", 1)
+    html = html.replace(hook, hook + chr(10) + "  if(s.id==='s14'&&window._lvEnter)window._lvEnter();" + chr(10) + "  if(s.id==='sv'||s.id==='sr')gameEnter();else gameLeave();", 1)
 
     html = html.replace("</head>", favicon() + chr(10) + "</head>", 1)
     (WEB / "index.html").write_text(html, encoding="utf-8")
