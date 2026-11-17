@@ -69,7 +69,7 @@ def main() -> None:
 
     start = html.index("/* ---------- slide 14 app ---------- */")
     end = html.index("/* ---------- enter hooks ---------- */")
-    js = (WEB / "stamp_anim.js").read_text(encoding="utf-8") + "const OFFLINE=" + json.dumps(offline(), ensure_ascii=False) + ";\n" + (WEB / "live_slide.js").read_text(encoding="utf-8") + "\n"
+    js = (WEB / "stamp_anim.js").read_text(encoding="utf-8") + (WEB / "fit.js").read_text(encoding="utf-8") + "const OFFLINE=" + json.dumps(offline(), ensure_ascii=False) + ";\n" + (WEB / "live_slide.js").read_text(encoding="utf-8") + "\n"
     html = html[:start] + js + html[end:]
 
     assert "e.target.matches('input')" in html
