@@ -91,9 +91,9 @@ function intro(){
   screen='intro';
   $('#app').innerHTML=head()+`
     <h1>Can you beat the <em>model?</em></h1>
-    <p class="lede">${N===1?'A real pipeline incident report. Tap the cause you think the investigators recorded. Our model gets the same report.':N+' real pipeline incident reports. For each one, tap the cause you think the investigators recorded. Our model gets the same reports.'} The big screen shows who wins.</p>
+    <p class="lede">${N===1?'You will read a real pipeline incident report and tap the cause you think the investigators recorded. Our model reads the same report, and the big screen shows who got it right.':'You will read '+N+' real pipeline incident reports and tap the cause you think the investigators recorded for each one. Our model reads the same reports, and the big screen shows who got more of them right.'}</p>
     <button class="go" id="start">${picks.some(p=>p>=0)?'Continue':'Start'}</button>
-    <p class="lab" style="margin-top:1rem;text-align:center">${N===1?'one report · about 20 seconds':N+' reports · about a minute'}</p>`;
+    <p class="lab" style="margin-top:1rem;text-align:center">${N===1?'This takes about twenty seconds.':'This takes about a minute.'}</p>`;
   $('#start').onclick=()=>{round=Math.max(0,picks.findIndex(p=>p<0));if(revealed||picks.every(p=>p>=0))return done();play()};
 }
 
@@ -102,7 +102,7 @@ function play(){
   const r=ROUNDS[round];
   $('#app').innerHTML=head()+`
     <div class="dots" ${N===1?'hidden':''}>${ROUNDS.map((_,i)=>`<button data-i="${i}" aria-label="Report ${i+1}" class="${i===round?'on':picks[i]>=0?'done':''}"></button>`).join('')}</div>
-    <p class="lab">${N===1?'The report':'Report '+(round+1)+' of '+N} · what caused it?</p>
+    <p class="lab">${N===1?'What caused this incident?':'Report '+(round+1)+' of '+N+': what caused it?'}</p>
     <div class="narr paper">${esc(r.text)}</div>
     <div class="opts">${CAUSES.map((c,i)=>`<button class="opt${picks[round]===i?' sel':''}" data-i="${i}"><b>${esc(c.title)}</b><span>${esc(c.blurb)}</span></button>`).join('')}</div>
     <div class="nav"><button id="prev" ${round===0?'disabled':''}>← Back</button><button id="next">${round===N-1?(picks[round]>=0?'Done →':'Skip →'):'Skip →'}</button></div>`;
@@ -132,8 +132,8 @@ function done(){
   screen='done';clearInterval(pollT);
   const mine=picks.map((p,i)=>p>=0?`<p style="margin:.35rem 0"><span class="lab">Report ${i+1}</span><br><b>${esc(CAUSES[p].title)}</b></p>`:`<p style="margin:.35rem 0"><span class="lab">Report ${i+1}</span><br><span style="color:var(--mute)">no answer yet</span></p>`).join('');
   $('#app').innerHTML=head()+`
-    <h1>Locked <em>in</em></h1>
-    <p class="lede"><span class="pulse"></span>Eyes on the big screen. Results appear here the moment they are revealed.</p>
+    <h1>Your answer is <em>in</em></h1>
+    <p class="lede"><span class="pulse"></span>Watch the big screen. Your result will appear here as soon as the answer is revealed.</p>
     <div class="res"><div class="lab">Your answers</div>${mine}</div>
     <div class="nav"><button id="edit">← Change an answer</button><span></span></div>
     <div id="results"></div>`;
@@ -161,17 +161,17 @@ function showResults(){
     const c=counts[i],tot=c.total||1,share=Math.round(100*c.counts[a.truth]/tot);
     const ok=picks[i]===a.truth;if(ok)me++;if(a.model===a.truth)model++;crowd+=c.counts[a.truth]/tot;
     return `<div class="res"><h3>Report ${i+1}</h3>
-      <p>Truth: <b style="color:var(--text)">${esc(CAUSES[a.truth].title)}</b></p>
+      <p>The true cause was <b style="color:var(--text)">${esc(CAUSES[a.truth].title)}</b>.</p>
       <div class="tags">
         <span class="tag ${ok?'y':''}">You: ${picks[i]>=0?esc(CAUSES[picks[i]].title):'—'} ${picks[i]>=0?(ok?'✓':'✗'):''}</span>
         <span class="tag m">Model: ${esc(CAUSES[a.model].title)} ${a.model===a.truth?'✓':'✗'}</span>
       </div>
-      <p style="margin-top:.4rem">${share}% of the room got this one right.</p></div>`;
+      <p style="margin-top:.4rem">${share}% of the room chose the right cause.</p></div>`;
   }).join('');
   const verdict=me>model?'You beat the model':me<model?'The model wins':answers.length===1?(me?'Both got it':'Both fooled'):'Dead heat';
   const avg=Math.round(100*crowd/answers.length);
   $('#results').innerHTML=`<div class="stampbox"><span class="verdict">${verdict}</span></div>
-    <p class="lede">You: <b style="color:var(--text)">${me}/${answers.length}</b> · Model: <b style="color:var(--text)">${model}/${answers.length}</b> · The room averaged <b style="color:var(--text)">${avg}%</b></p>${rows}`;
+    <p class="lede">${answers.length===1?`You ${me?'chose the right cause':'did not choose the right cause'}, and the model ${model?'did':'did not'}. ${avg}% of the room was right.`:`You got <b style="color:var(--text)">${me} of ${answers.length}</b> right, the model got <b style="color:var(--text)">${model} of ${answers.length}</b>, and the room averaged <b style="color:var(--text)">${avg}%</b>.`}</p>${rows}`;
   scrollTo({top:$('#results').offsetTop-20,behavior:'smooth'});
 }
 

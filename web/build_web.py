@@ -29,6 +29,9 @@ WEB = ROOT / "web"
 sys.path.insert(0, str(ROOT / "app"))
 from causes import CAUSES, LABELS  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from copy_edits import EDITS  # noqa: E402
+
 SITE = "https://momentofgroundtruth.netlify.app"
 PLAY_URL = SITE + "/play/"
 EXAMPLE_ROWS = [438, 83, 72, 365, 130, 12, 434, 118]
@@ -47,7 +50,7 @@ def offline() -> dict:
     df = pd.read_csv(ROOT / "data" / "experiment1" / "test.csv")
     items = []
     for i, (row, s) in enumerate(zip(EXAMPLE_ROWS, saved["items"])):
-        items.append({"name": f"Example {i + 1}", "text": df.loc[row, "narrative_clean"], "truth": df.loc[row, "CAUSE"], "probs": s["probs"], "words": s["words"]})
+        items.append({"name": f"Report {i + 1}", "text": df.loc[row, "narrative_clean"], "truth": df.loc[row, "CAUSE"], "probs": s["probs"], "words": s["words"]})
     return {
         "labels": LABELS,
         "titles": [CAUSES[l]["title"] for l in LABELS],
@@ -112,6 +115,9 @@ def build_play(rounds: list[dict]) -> None:
 
 def main() -> None:
     html = (ROOT / "docs" / "Moment of GroundTruth.html").read_text(encoding="utf-8")
+    for old, new in EDITS:
+        assert html.count(old) == 1, f"copy edit does not match exactly once: {old[:60]!r}"
+        html = html.replace(old, new)
     off = offline()
     rounds, answers = game_data(off)
 
@@ -123,15 +129,20 @@ def main() -> None:
     # slides: the app slide becomes the live demo; the two game slides go in front of it
     nr = len(rounds)
     what = "a real incident report" if nr == 1 else f"{nr} real incident reports"
-    same = "The same report goes" if nr == 1 else f"The same {nr} reports go"
-    game_slides = read("game_slides.html").replace("/*QR*/", qr_svg(PLAY_URL)).replace("/*PLAYURL*/", PLAY_URL.replace("https://", "")).replace("/*WHAT*/", what).replace("/*SAME*/", same)
-    live = game_slides.strip() + chr(10) + chr(10) + read("live_slide.html").strip()
+    model_gets = (
+        "The model reads this same report, and it has never seen it before, because the report comes from the held-out test set."
+        if nr == 1
+        else f"The model reads these same {nr} reports, and it has never seen them before, because they come from the held-out test set."
+    )
+    game_slides = read("game_slides.html").replace("/*QR*/", qr_svg(PLAY_URL)).replace("/*PLAYURL*/", PLAY_URL.replace("https://", "")).replace("/*WHAT*/", what).replace("/*MODELGETS*/", model_gets)
+    # order: the demo shows what the model outputs, then the game asks the room to beat it
+    live = read("live_slide.html").strip() + chr(10) + chr(10) + game_slides.strip()
     html, n = re.subn(r'<section class="slide s-app" id="s14">.*?</section>', lambda m: live, html, count=1, flags=re.S)
     assert n == 1, "slide 14 not found"
 
     marker = "@media (prefers-reduced-motion:reduce)"
     assert marker in html
-    html = html.replace(marker, read("live_slide.css") + read("stamp_anim.css") + read("game.css") + marker, 1)
+    html = html.replace(marker, read("live_slide.css") + read("stamp_anim.css") + read("game.css") + read("deck_fixes.css") + marker, 1)
 
     start = html.index("/* ---------- slide 14 app ---------- */")
     end = html.index("/* ---------- enter hooks ---------- */")
@@ -155,22 +166,22 @@ def main() -> None:
     assert "e.target.matches('input')" in html
     html = html.replace("e.target.matches('input')", "e.target.matches('input,textarea')", 1)
 
-    # the speaker plan: two new entries before the live demo
+    # the speaker plan: two new entries after the live demo, before the close
     new_plan = (
-        "{w:'muhammad',t:40,title:'Beat the model',say:['Phones out. Scan the code. One real report from the test set: tap the cause.','The model has never seen this report. Same eight choices.','Watch the people-in counter. When it stops growing, move on.']},\n "
-        "{w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the true cause and the model answer.','Read it out: where the crowd split, whether the model was wrong, how sure it was.','Shift+X wipes all votes for a fresh run.']},\n "
+        "{w:'muhammad',t:40,title:'Beat the model',say:['Ask everyone to take out their phones and scan the code.','Explain that the report comes from the test set and that the model has never seen it.','Watch the counter, and move on when it stops growing.']},\n "
+        "{w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the true cause and the answer the model gave.','Point out where the room split and how confident the model was.','Press Shift+X afterwards to wipe the votes for a fresh run.']},\n "
     )
-    html, n = re.subn(r"(\{w:'sakina',t:\d+,title:'App and live demo')", lambda m: new_plan + m.group(1), html, count=1)
+    html, n = re.subn(r"(\{w:'all',t:\d+,title:'Close')", lambda m: new_plan + m.group(1), html, count=1)
     assert n == 1, "plan entry not found"
 
     html = html.replace("function onEnter(n){", "function onEnter(n){" + chr(10) + "  if(n===0)playStamp();", 1)
     hook = "if(n===9&&window._barsReset)window._barsReset();"
     assert hook in html
-    html = html.replace(hook, hook + chr(10) + "  if(n===14&&window._lvEnter)window._lvEnter();" + chr(10) + "  if(n===12||n===13)gameEnter();else gameLeave();", 1)
+    html = html.replace(hook, hook + chr(10) + "  if(n===12&&window._lvEnter)window._lvEnter();" + chr(10) + "  if(n===13||n===14)gameEnter();else gameLeave();", 1)
 
     old = "Switch to the live app. Paste or pick a real test narrative."
     assert old in html
-    html = html.replace(old, "The live demo is on this slide, no window switch. Pick an example; these are real saved model outputs on held-out test reports. The badge top right says SAVED RUN.", 1)
+    html = html.replace(old, "The demo is on this slide, so there is no need to switch windows. Pick one of the eight reports; these are the real saved outputs of the model on held-out test reports.", 1)
 
     html = html.replace("</head>", favicon() + chr(10) + "</head>", 1)
     (WEB / "index.html").write_text(html, encoding="utf-8")

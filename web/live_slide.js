@@ -2,7 +2,7 @@
 (function(){
   const API=new URLSearchParams(location.search).get('api')||(location.protocol==='file:'?'http://localhost:8000/api':'/api');
   const PHOTO={0:'equip',1:'corr',2:'mat',3:'exc',4:'nat',6:'oth',7:'op'};
-  const st=$('#lv-status'),ta=$('#lv-text'),btn=$('#lv-go'),out=$('#lv-out'),exBox=$('#lv-ex'),wc=$('#lv-words');
+  const rd=$('#lv-read'),st=$('#lv-status'),ta=$('#lv-text'),btn=$('#lv-go'),out=$('#lv-out'),exBox=$('#lv-ex'),wc=$('#lv-words');
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const argmax=a=>a.indexOf(Math.max(...a));
   const exOf=t=>OFFLINE.items.find(x=>x.text.trim()===t.trim());
@@ -20,11 +20,14 @@
   function setLive(v){
     live=v;st.className='pill lv-st '+(v?'on':'off');
     st.innerHTML='<i></i>'+(v?'LIVE · model on Oracle Cloud':'SAVED RUN · real model output');
-    ta.readOnly=!v;ta.placeholder=v?'e.g. a contractor using a backhoe struck the 12-inch transmission line while digging a trench...':'Pick one of the eight real test reports above';
+    ta.readOnly=!v;ta.placeholder=v?'e.g. a contractor using a backhoe struck the 12-inch transmission line while digging a trench...':'Choose a report above and it will appear here.';
+    btn.hidden=!v;wc.hidden=!v;
+    ta.hidden=!v;rd.hidden=v;
+    if(!v&&!rd.dataset.set){rd.className='lv-read paper empty';rd.textContent='Choose a report above and it will appear here.'}
   }
   async function ping(){if(!LIVE_ENABLED){setLive(false);return}try{const h=await api('/health',null,6000);setLive(!!h.ok)}catch(e){setLive(false)}}
 
-  const empty=()=>{out.innerHTML='<div class="lv-empty"><div><b>Waiting for a report</b>Pick an example on the left, or paste any incident narrative and press the button.</div></div>'};
+  const empty=()=>{out.innerHTML='<div class="lv-empty"><div><b>No report chosen yet</b>Choose a report on the left, and the model will stamp it with a cause.</div></div>'};
   const msg=m=>{$('#lv-act2').hidden=true;out.innerHTML='<p class="lv-msg">'+m+'</p>'};
 
   exBox.innerHTML=OFFLINE.items.map((x,i)=>`<button aria-pressed="false" data-i="${i}">${x.name}</button>`).join('');
@@ -56,25 +59,25 @@
     const top=res.top,C=OFFLINE.causes[top],pr=res.probs,ex=exOf(ta.value);
     const order=[...pr.keys()].sort((a,b)=>pr[b]-pr[a]);
     const photo=PHOTO[top]!==undefined?`<div class="frame"><img src="${IMG[PHOTO[top]]}" alt="${esc(C.title)}"></div>`:`<div class="frame"><div class="none">No photo for this cause</div></div>`;
-    const badge=ex?`<span class="lv-badge">Recorded cause: <b>${esc(OFFLINE.titles[OFFLINE.labels.indexOf(ex.truth)])}</b> · the model got it <b>${OFFLINE.labels.indexOf(ex.truth)===top?'right':'wrong'}</b></span>`:'';
+    const badge=ex?`<span class="lv-badge">The recorded cause is <b>${esc(OFFLINE.titles[OFFLINE.labels.indexOf(ex.truth)])}</b>, and the model got it <b>${OFFLINE.labels.indexOf(ex.truth)===top?'right':'wrong'}</b>.</span>`:'';
     out.innerHTML=`
       <div class="lv-top"><div class="lv-hd"><div class="lv-stamp">${esc(C.title)}</div><div class="lv-conf"><span class="big">${Math.round(pr[top]*100)}%</span><span class="lab">model confidence</span></div></div>
         <figure class="lv-photo">${photo}<figcaption class="credit" title="${esc(C.caption||'')}">${esc(C.caption||'')}</figcaption></figure></div>
       <div class="lv-bars">${order.map((i,r)=>`<div class="lv-brow${r?'':' top'}"><span>${esc(res.titles[i])}</span><div class="tr"><div class="fl" data-w="${(pr[i]*100).toFixed(1)}"></div></div><span class="pc">${Math.round(pr[i]*100)}%</span></div>`).join('')}</div>
-      <div class="lv-narr paper" id="lv-narr">${esc(res.cleaned)}</div>
 `;
+    rd.dataset.set='1';rd.className='lv-read paper';rd.textContent=res.cleaned;
     $('#lv-act2').hidden=false;$('#lv-badge').innerHTML=badge;$('#lv-whyst').textContent='';$('#lv-why').disabled=false;
     requestAnimationFrame(()=>requestAnimationFrame(()=>$$('.fl',out).forEach(f=>f.style.width=f.dataset.w+'%')));
   }
 
   function shade(words,note){
     const mx=Math.max(...words.map(w=>Math.abs(w[1])),1e-9);
-    $('#lv-narr').innerHTML=words.map(([w,v])=>{const a=Math.min(Math.abs(v)/mx,1)*.85;return `<span style="background:${v>0?`rgba(216,41,31,${a.toFixed(2)})`:`rgba(95,168,173,${a.toFixed(2)})`}" title="${v>=0?'+':''}${v.toFixed(3)}">${esc(w.trim())}</span>`}).join(' ');
+    rd.innerHTML=words.map(([w,v])=>{const a=Math.min(Math.abs(v)/mx,1)*.85;return `<span style="background:${v>0?`rgba(216,41,31,${a.toFixed(2)})`:`rgba(95,168,173,${a.toFixed(2)})`}" title="${v>=0?'+':''}${v.toFixed(3)}">${esc(w.trim())}</span>`}).join(' ');
     $('#lv-whyst').innerHTML='<span class="lv-legend"><span style="background:rgba(216,41,31,.6)">pushes toward</span><span style="background:rgba(95,168,173,.6)">pushes away</span></span>'+(note?` <span class="lab">${note}</span>`:'');
   }
   async function why(){
     const b=$('#lv-why'),s=$('#lv-whyst'),text=ta.value.trim(),ex=exOf(text); let sec=0;
-    if(!live&&ex&&ex.words){shade(ex.words,'real SHAP run, saved');return}
+    if(!live&&ex&&ex.words){shade(ex.words);return}
     b.disabled=true; s.textContent='Hiding words and re-scoring... 0 s';
     const tm=setInterval(()=>{s.textContent='Hiding words and re-scoring... '+(++sec)+' s'},1000);
     try{const r=await api('/explain',{text,evals:100},24000);clearInterval(tm);shade(r.words,'live SHAP')}

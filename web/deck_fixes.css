@@ -1,0 +1,4 @@
+/* small layout fixes to the project deck */
+.tiles{gap:1.6rem}
+.tile .nums{padding-bottom:.25rem}
+.tile .nums small{margin-top:.2rem}
