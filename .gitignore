@@ -6,3 +6,6 @@ __pycache__/
 # Streamlit app: cached BERT features (rebuilt by app/build_head.py); head.pt is tracked
 app/artifacts/features_*.npy
 app/artifacts/*.log
+
+# Node (Netlify function deps)
+node_modules/

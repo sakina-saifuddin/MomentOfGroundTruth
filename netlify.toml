@@ -5,6 +5,10 @@
 [build]
   publish = "web"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 [[redirects]]
   from = "/api/*"
   to = "http://YOUR_VM_HOST:8000/api/:splat"
