@@ -6,6 +6,7 @@
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const argmax=a=>a.indexOf(Math.max(...a));
   const exOf=t=>OFFLINE.items.find(x=>x.text.trim()===t.trim());
+  const LIVE_ENABLED=!!new URLSearchParams(location.search).get('api')||LIVE_API_ENABLED;
   let live=false,last=null;
 
   async function api(path,body,ms){
@@ -16,8 +17,12 @@
       return await r.json();
     }finally{clearTimeout(t)}
   }
-  function setLive(v){live=v;st.className='pill lv-st '+(v?'on':'off');st.innerHTML='<i></i>'+(v?'LIVE · model on Oracle Cloud':'OFFLINE · replaying saved results')}
-  async function ping(){try{const h=await api('/health',null,6000);setLive(!!h.ok)}catch(e){setLive(false)}}
+  function setLive(v){
+    live=v;st.className='pill lv-st '+(v?'on':'off');
+    st.innerHTML='<i></i>'+(v?'LIVE · model on Oracle Cloud':'SAVED RUN · real model output');
+    ta.readOnly=!v;ta.placeholder=v?'e.g. a contractor using a backhoe struck the 12-inch transmission line while digging a trench...':'Pick one of the eight real test reports above';
+  }
+  async function ping(){if(!LIVE_ENABLED){setLive(false);return}try{const h=await api('/health',null,6000);setLive(!!h.ok)}catch(e){setLive(false)}}
 
   const empty=()=>{out.innerHTML='<div class="lv-empty"><div><b>Waiting for a report</b>Pick an example on the left, or paste any incident narrative and press the button.</div></div>'};
   const msg=m=>{$('#lv-act2').hidden=true;out.innerHTML='<p class="lv-msg">'+m+'</p>'};
@@ -36,12 +41,13 @@
   async function run(){
     const text=ta.value.trim(); if(!text)return;
     btn.disabled=true; msg('Reading the narrative...');
-    let res;
-    try{res=await api('/predict',{text});setLive(true)}
+    let res;const saved=exOf(text);
+    if(!LIVE_ENABLED&&saved)res={cleaned:saved.text,probs:saved.probs,top:argmax(saved.probs),titles:OFFLINE.titles};
+    else try{res=await api('/predict',{text});setLive(true)}
     catch(e){
-      setLive(false); const o=exOf(text);
-      if(!o){msg('Cannot reach the model server ('+esc(e.message)+'). Pick one of the eight examples to replay its saved result.');sync();return}
-      res={cleaned:o.text,probs:o.probs,top:argmax(o.probs),titles:OFFLINE.titles};
+      setLive(false);
+      if(!saved){msg('Cannot reach the model server ('+esc(e.message)+'). Pick one of the eight examples to replay its saved result.');sync();return}
+      res={cleaned:saved.text,probs:saved.probs,top:argmax(saved.probs),titles:OFFLINE.titles};
     }
     last=res; draw(res); sync();
   }
@@ -68,6 +74,7 @@
   }
   async function why(){
     const b=$('#lv-why'),s=$('#lv-whyst'),text=ta.value.trim(),ex=exOf(text); let sec=0;
+    if(!live&&ex&&ex.words){shade(ex.words,'real SHAP run, saved');return}
     b.disabled=true; s.textContent='Hiding words and re-scoring... 0 s';
     const tm=setInterval(()=>{s.textContent='Hiding words and re-scoring... '+(++sec)+' s'},1000);
     try{const r=await api('/explain',{text,evals:100},24000);clearInterval(tm);shade(r.words,'live SHAP')}

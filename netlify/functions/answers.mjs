@@ -6,3 +6,4 @@ export default [
     "conf": 0.321
   }
 ];
+export const HOST_DEFAULT = "mog-7f3a9c2e41";

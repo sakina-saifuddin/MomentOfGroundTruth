@@ -3,7 +3,7 @@
   const GAME=new URLSearchParams(location.search).get('game')||'/.netlify/functions/game';
   const qs=new URLSearchParams(location.search);
   if(qs.get('host'))try{localStorage.setItem('mogHost',qs.get('host'))}catch(e){}
-  let HOSTKEY='mog-host';try{HOSTKEY=localStorage.getItem('mogHost')||HOSTKEY}catch(e){}
+  let HOSTKEY=HOST_DEFAULT;try{HOSTKEY=localStorage.getItem('mogHost')||HOSTKEY}catch(e){}
   const SHORT=['Equipment','Corrosion','Material','Excavation','Natural force','Other outside','Other cause','Incorrect op'];
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   let st=null,timer=0,online=false;

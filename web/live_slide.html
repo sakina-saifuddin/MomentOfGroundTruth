@@ -1,14 +1,14 @@
 <section class="slide s-live" id="s14">
   <p class="eyebrow"><b>Live demo</b><i></i><span id="lv-status" class="pill lv-st"><i></i>checking server</span></p>
-  <h2>Paste a report. Watch it get <em>stamped</em></h2>
+  <h2>Pick a report. Watch it get <em>stamped</em></h2>
   <div class="body lv">
     <div class="lv-in">
-      <p class="lab">Real held-out test reports, or write your own</p>
+      <p class="lab">Real held-out test reports the model never saw in training</p>
       <div class="seg" id="lv-ex" role="group" aria-label="Example reports"></div>
       <textarea id="lv-text" rows="7" spellcheck="false" aria-label="Incident narrative" placeholder="e.g. a contractor using a backhoe struck the 12-inch transmission line while digging a trench..."></textarea>
       <div class="lv-act"><button id="lv-go" class="lv-btn" disabled>Find the root cause</button><span id="lv-words" class="lab">0 words</span></div>
       <div class="lv-act2" id="lv-act2" hidden><button class="lv-btn ghost" id="lv-why">Explain why (SHAP)</button><span class="lab" id="lv-whyst"></span><span class="lv-badge" id="lv-badge"></span></div>
-      <p class="credit">Frozen BERT + mean pooling + a 6,152-weight linear head, served from our Oracle Cloud VM. The model reads the narrative only, never the operator name or any other field.</p>
+      <p class="credit">Frozen BERT + mean pooling + a 6,152-weight linear head. These are the model's real outputs and SHAP explanations on held-out test reports. It reads the narrative only, never the operator name or any other field.</p>
     </div>
     <div class="lv-out" id="lv-out"></div>
   </div>

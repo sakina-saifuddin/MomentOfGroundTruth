@@ -9,9 +9,9 @@
 //   POST {action:"reveal", key, value}   host only
 //   POST {action:"reset", key}           host only, wipes all votes
 import { getStore } from "@netlify/blobs";
-import ANSWERS from "./answers.mjs";
+import ANSWERS, { HOST_DEFAULT } from "./answers.mjs";
 
-const HOST_KEY = process.env.HOST_KEY || "mog-host";
+const HOST_KEY = process.env.HOST_KEY || HOST_DEFAULT;
 const N_CAUSES = 8;
 const N_ROUNDS = ANSWERS.length;
 const STATE_KEY = "meta/state";
