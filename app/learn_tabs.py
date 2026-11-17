@@ -18,7 +18,7 @@ from causes import ASSETS, CAUSES, LABELS
 ROOT = Path(__file__).resolve().parents[1]
 FIG = ROOT / "reports" / "figures"
 FINAL = FIG / "final"
-RED = "#C8201C"
+RED = "#D8291F"
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -283,7 +283,7 @@ def results() -> None:
     st.markdown("### Pick a score and compare")
     metric = st.radio("Score", ["macro_f1", "accuracy", "macro_precision", "macro_recall"], horizontal=True, format_func=lambda m: {"macro_f1": "Macro-F1", "accuracy": "Accuracy", "macro_precision": "Macro precision", "macro_recall": "Macro recall"}[m])
     pivot = df.pivot(index="model", columns="experiment", values=metric)
-    st.bar_chart(pivot, horizontal=True, color=[RED, "#2A2A2A"], height=320)
+    st.bar_chart(pivot, horizontal=True, color=[RED, "#e3a63a"], height=320)
     st.markdown(
         '<p class="small"><b>Precision</b>: when the model says a cause, how often is it right? <b>Recall</b>: of the reports that really have that cause, how many did it find? '
         "<b>F1</b> blends the two.</p>",
@@ -294,7 +294,7 @@ def results() -> None:
     show = df[["model", "experiment", "accuracy", "macro_precision", "macro_recall", "macro_f1", "best_val_macro_f1"]].rename(
         columns={"model": "Model", "experiment": "Experiment", "accuracy": "Accuracy", "macro_precision": "Macro precision", "macro_recall": "Macro recall", "macro_f1": "Macro-F1", "best_val_macro_f1": "Practice-test macro-F1"}
     )
-    st.dataframe(show.style.format({c: "{:.3f}" for c in show.columns[2:]}).highlight_max(subset=["Macro-F1"], color="#F3C9C7"), hide_index=True, width="stretch")
+    st.dataframe(show.style.format({c: "{:.3f}" for c in show.columns[2:]}).highlight_max(subset=["Macro-F1"], color="#5a2a22"), hide_index=True, width="stretch")
 
     st.markdown("---")
     st.markdown("## The story the graphs tell")

@@ -1,0 +1,18 @@
+# Netlify serves this folder as a static site. /api/* is proxied to the model server on the OCI VM,
+# so the browser only ever talks to https (no mixed-content block) and no CORS setup is needed.
+#
+# Replace YOUR_VM_HOST with the VM's public IP (or a hostname such as 129-146-1-2.nip.io).
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/api/*"
+  to = "http://YOUR_VM_HOST:8000/api/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"

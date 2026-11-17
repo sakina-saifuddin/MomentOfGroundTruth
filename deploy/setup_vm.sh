@@ -10,6 +10,9 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 8501 -j ACCEPT
 sudo netfilter-persistent save || true
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 8000 -j ACCEPT
+sudo netfilter-persistent save || true
 sudo cp deploy/gt-app.service /etc/systemd/system/gt-app.service
-sudo systemctl daemon-reload && sudo systemctl enable --now gt-app
-echo "Running on port 8501. Also open TCP 8501 in the OCI security list."
+sudo cp deploy/gt-api.service /etc/systemd/system/gt-api.service
+sudo systemctl daemon-reload && sudo systemctl enable --now gt-app gt-api
+echo "Streamlit on 8501, prediction API on 8000. Open TCP 8501 and 8000 in the OCI security list."

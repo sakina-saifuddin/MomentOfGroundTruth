@@ -11,7 +11,7 @@ import streamlit as st
 from causes import ASSETS, CAUSES, LABELS
 
 ROOT = Path(__file__).resolve().parents[1]
-RED = "#C8201C"
+RED = "#D8291F"
 EXAMPLE_ROWS = [438, 83, 72, 365, 130, 12, 434, 118]  # one test-split narrative per cause
 
 
@@ -96,7 +96,7 @@ def render(model) -> None:
     rows = sorted(range(8), key=lambda i: -probs[i])
     bars = ""
     for rank, i in enumerate(rows):
-        color = RED if rank == 0 else "#CFC5BF"
+        color = RED if rank == 0 else "#7d7365"
         bars += (
             f'<div class="bar-row"><div class="bar-name">{html.escape(str(CAUSES[LABELS[i]]["title"]))}</div>'
             f'<div class="bar-track"><div class="bar-fill" style="width:{probs[i] * 100:.1f}%;background:{color}"></div></div>'
@@ -122,7 +122,7 @@ def render(model) -> None:
 
     st.markdown("##### Why did the model say this?")
     st.markdown(
-        f"Each word is shaded by how much it pushed the model **toward** (red) or **away from** (blue) <b>{html.escape(str(cause['title']))}</b>. "
+        f"Each word is shaded by how much it pushed the model **toward** (red) or **away from** (teal) <b>{html.escape(str(cause['title']))}</b>. "
         "This is **SHAP**: it re-scores the narrative many times with some words hidden, and measures how much each word changed the answer.",
         unsafe_allow_html=True,
     )
@@ -146,11 +146,11 @@ def render(model) -> None:
             if not word.strip():
                 continue
             a = min(abs(v) / mx, 1.0) * 0.85
-            col = f"rgba(200,32,28,{a:.2f})" if v > 0 else f"rgba(30,100,200,{a:.2f})"
+            col = f"rgba(216,41,31,{a:.2f})" if v > 0 else f"rgba(95,168,173,{a:.2f})"
             spans.append(f'<span style="background:{col}" title="{v:+.3f}">{html.escape(word.strip())}</span>')
         st.markdown(
-            '<p class="legend"><span style="background:rgba(200,32,28,.6)">pushes toward this cause</span>'
-            '<span style="background:rgba(30,100,200,.6)">pushes away</span></p>',
+            '<p class="legend"><span style="background:rgba(216,41,31,.6)">pushes toward this cause</span>'
+            '<span style="background:rgba(95,168,173,.6)">pushes away</span></p>',
             unsafe_allow_html=True,
         )
         st.markdown(f'<div class="narr">{" ".join(spans)}</div>', unsafe_allow_html=True)

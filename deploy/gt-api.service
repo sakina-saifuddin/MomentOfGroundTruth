@@ -1,0 +1,12 @@
+[Unit]
+Description=Moment of GroundTruth prediction API
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/MomentOfGroundTruth
+ExecStart=/home/ubuntu/MomentOfGroundTruth/.venv/bin/uvicorn api.server:app --host 0.0.0.0 --port 8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

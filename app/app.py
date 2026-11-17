@@ -18,46 +18,57 @@ sys.path.insert(0, str(APP_DIR))
 
 st.set_page_config(page_title="Moment-of-GroundTruth", page_icon=str(ROOT / "docs" / "images" / "logo-stamp.png"), layout="centered")
 
-RED = "#C8201C"
+RED = "#D8291F"
 st.markdown(
     f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&display=swap');
-html, body, [class*="css"], .stApp {{ font-family: 'Inter', system-ui, sans-serif; }}
-h1, h2, h3, .anton {{ font-family: 'Anton', 'Impact', sans-serif !important; letter-spacing: .03em; text-transform: uppercase; font-weight: 400 !important; }}
-h2 {{ color: {RED}; margin-top: 1.4rem; }}
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+:root {{ --soil:#120e0b; --soil-2:#1c1611; --line:rgba(239,232,218,.17); --paper:#eee6d6; --ink:#1b1612;
+        --text:#f1eadc; --mute:#d0c7b5; --stamp:{RED}; --gru:#e3a63a; --lstm:#5fa8ad; }}
+html, body, [class*="css"], .stApp {{ font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; }}
+.stApp {{ background: radial-gradient(120% 90% at 30% 0%, #1c1611, #120e0b 70%) fixed; color: var(--text); }}
+header[data-testid="stHeader"] {{ background: transparent; }}
+h1, h2, h3, .anton {{ font-family: 'Anton', 'Impact', 'Arial Narrow', sans-serif !important; letter-spacing: .012em; text-transform: uppercase; font-weight: 400 !important; color: var(--text); }}
+h2 {{ color: var(--stamp); margin-top: 1.4rem; }}
 h3 {{ margin-top: 1.1rem; }}
-h5 {{ font-family: 'Anton', sans-serif !important; letter-spacing:.04em; text-transform: uppercase; font-weight:400 !important; margin-top:1.1rem; }}
-.block-container {{ max-width: 900px; padding-top: 1.6rem; }}
-.title {{ font-family: 'Anton', sans-serif; color: {RED}; font-size: 3.1rem; line-height: 1; letter-spacing: .02em; margin: 0; }}
-.tag {{ color: #444; margin: .35rem 0 0 0; font-size: 1.02rem; }}
-.small {{ color: #6b6b6b; font-size: .86rem; }}
-.take {{ font-size: .93rem; border-left: 4px solid {RED}; padding-left: .7rem; margin-bottom: 1.6rem; }}
-.stamp {{ display:inline-block; border: 5px solid {RED}; border-radius: 10px; padding: .35rem 1.1rem; transform: rotate(-3deg);
-         color: {RED}; font-family:'Anton',sans-serif; font-size: 2.3rem; text-transform: uppercase; letter-spacing:.03em; line-height:1.15; }}
+h5 {{ font-family: 'IBM Plex Mono', monospace !important; font-size: .85rem !important; letter-spacing: .14em; text-transform: uppercase; font-weight: 500 !important; color: var(--mute); margin-top: 1.4rem; display:flex; align-items:center; gap:.8rem; }}
+h5::after {{ content:""; flex:none; width:2.2rem; height:1px; background: var(--line); }}
+.block-container {{ max-width: 920px; padding-top: 1.6rem; }}
+.title {{ font-family: 'Anton', 'Impact', sans-serif; color: var(--stamp); font-size: 3.6rem !important; line-height: .95 !important; letter-spacing: .015em; margin: 0; text-shadow: 0 .25rem 1.4rem rgba(0,0,0,.5); }}
+.tag {{ color: var(--text); margin: .5rem 0 0 0; font-size: 1.1rem; line-height: 1.45; }}
+.small {{ color: var(--mute); font-family: 'IBM Plex Mono', monospace; font-size: .8rem; letter-spacing: .03em; }}
+.take {{ font-size: .95rem; border-left: 3px solid var(--stamp); padding-left: .8rem; margin-bottom: 1.6rem; color: var(--mute); }}
+.stamp {{ display:inline-block; border: 5px solid var(--stamp); border-radius: 6px; padding: .35rem 1.1rem; transform: rotate(-4deg);
+         color: var(--stamp); font-family:'Anton','Impact',sans-serif; font-size: 2.4rem; text-transform: uppercase; letter-spacing:.03em; line-height:1.15;
+         filter: drop-shadow(0 .6rem 1rem rgba(0,0,0,.55)); }}
 .stamp-wrap {{ padding: .3rem 0 .8rem .3rem; }}
-.bar-row {{ display:flex; align-items:center; gap:.6rem; margin:.28rem 0; font-size:.92rem; }}
+.bar-row {{ display:flex; align-items:center; gap:.8rem; margin:.3rem 0; font-size:.95rem; }}
 .bar-name {{ width: 15rem; flex: none; }}
-.bar-track {{ flex:1; background:#EFE9E5; height: 14px; border-radius: 7px; overflow:hidden; }}
-.bar-fill {{ height: 100%; border-radius: 7px; }}
-.bar-pct {{ width: 3.2rem; text-align:right; font-variant-numeric: tabular-nums; }}
-.narr {{ line-height: 2.05; font-size: 1.02rem; background:#FBF8F6; padding: 1rem 1.1rem; border-radius: 10px; border: 1px solid #EFE6E0; }}
-.narr span {{ padding: 2px 3px; border-radius: 3px; margin-right: 1px; }}
-.legend span {{ display:inline-block; padding: 2px 8px; border-radius: 4px; margin-right: .5rem; font-size:.82rem; }}
-.card {{ border:1px solid #EFE6E0; border-radius: 12px; overflow:hidden; background:#fff; }}
+.bar-track {{ flex:1; background: rgba(239,232,218,.07); height: 1.05rem; overflow:hidden; }}
+.bar-fill {{ height: 100%; }}
+.bar-pct {{ width: 3.4rem; text-align:right; font-family:'IBM Plex Mono',monospace; font-variant-numeric: tabular-nums; }}
+.narr {{ line-height: 2.05; font-size: 1.02rem; background: var(--paper); color: var(--ink); padding: 1.1rem 1.3rem; box-shadow: 0 .8rem 2rem rgba(0,0,0,.45); }}
+.narr span {{ padding: 2px 3px; border-radius: 2px; margin-right: 1px; }}
+.legend span {{ display:inline-block; padding: 2px 8px; border-radius: 2px; margin-right: .5rem; font-family:'IBM Plex Mono',monospace; font-size:.78rem; color: var(--ink); }}
+.card {{ border:1px solid var(--line); overflow:hidden; background: var(--soil-2); }}
 .card .txt {{ padding: .9rem 1.1rem 1rem 1.1rem; }}
-.noimg {{ height: 190px; display:flex; align-items:center; justify-content:center; background:#F6F1EE; color:{RED}; }}
-.noimg-small {{ height: 120px; display:flex; align-items:center; justify-content:center; background:#F6F1EE; color:{RED}; border-radius:8px; font-size:.85rem; }}
-.callout {{ background:#FBF4F2; border-left: 5px solid {RED}; border-radius: 6px; padding: .8rem 1rem; margin: .7rem 0 1rem 0; }}
-.stats {{ display:flex; gap:.7rem; flex-wrap:wrap; margin: .6rem 0 1rem 0; }}
-.stat {{ flex:1; min-width: 8.5rem; background:#FBF4F2; border-radius: 10px; padding: .8rem .9rem; text-align:center; }}
-.stat .num {{ font-family:'Anton',sans-serif; color:{RED}; font-size:1.9rem; line-height:1.1; }}
-.stat .lab {{ font-size:.8rem; color:#555; margin-top:.15rem; }}
-.steps {{ display:flex; gap:.7rem; margin: .2rem 0 1rem 0; }}
-.step {{ flex:1; background:#FBF4F2; border-radius:10px; padding:.7rem .9rem; }}
-.step .n {{ display:inline-block; width:1.7rem; height:1.7rem; border-radius:50%; background:{RED}; color:#fff; text-align:center; line-height:1.7rem; font-weight:600; margin-bottom:.25rem; }}
-button[data-baseweb="tab"] {{ font-family:'Anton',sans-serif; letter-spacing:.05em; text-transform: uppercase; font-size: 1rem; }}
-div.stButton > button[kind="primary"] {{ font-family:'Anton',sans-serif; letter-spacing:.06em; font-size:1.15rem; padding:.5rem 1.5rem; border-radius: 8px; }}
+.noimg {{ height: 190px; display:flex; align-items:center; justify-content:center; background: var(--soil-2); color:var(--stamp); }}
+.noimg-small {{ height: 120px; display:flex; align-items:center; justify-content:center; background: var(--soil-2); color:var(--stamp); font-size:.85rem; }}
+.callout {{ background: var(--paper); color: var(--ink); border-left: 5px solid var(--stamp); padding: .8rem 1rem; margin: .7rem 0 1rem 0; box-shadow: 0 .6rem 1.6rem rgba(0,0,0,.4); }}
+.callout b, .callout .small {{ color: var(--ink); }}
+.stats {{ display:flex; gap:.8rem; flex-wrap:wrap; margin: .6rem 0 1rem 0; }}
+.stat {{ flex:1; min-width: 8.5rem; background: var(--soil-2); border:1px solid var(--line); border-top: 3px solid var(--stamp); padding: .8rem .9rem; text-align:left; }}
+.stat .num {{ font-family:'Anton','Impact',sans-serif; color:var(--text); font-size:2.2rem; line-height:1.05; font-variant-numeric: tabular-nums; }}
+.stat .lab {{ font-family:'IBM Plex Mono',monospace; font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color: var(--mute); margin-top:.25rem; }}
+.steps {{ display:flex; gap:.8rem; margin: .2rem 0 1rem 0; }}
+.step {{ flex:1; background: var(--soil-2); border:1px solid var(--line); border-top: 2px solid var(--text); padding:.7rem .9rem; }}
+.step .n {{ display:inline-block; width:1.7rem; height:1.7rem; border-radius:50%; background:var(--stamp); color:#fff; text-align:center; line-height:1.7rem; font-family:'IBM Plex Mono',monospace; font-weight:500; margin-bottom:.25rem; }}
+button[data-baseweb="tab"] {{ font-family:'IBM Plex Mono',monospace; letter-spacing:.06em; text-transform: uppercase; font-size: .82rem; }}
+div[data-baseweb="tab-list"] {{ border-bottom: 1px solid var(--line); }}
+div.stButton > button[kind="primary"] {{ font-family:'Anton','Impact',sans-serif; letter-spacing:.06em; font-size:1.15rem; padding:.5rem 1.6rem; border-radius: 3px; text-transform: uppercase; box-shadow: 0 .4rem 1.2rem rgba(0,0,0,.45); }}
+div.stButton > button:not([kind="primary"]) {{ font-family:'IBM Plex Mono',monospace; letter-spacing:.05em; border-radius:3px; border:1px solid var(--line); background: transparent; color: var(--text); }}
+textarea {{ font-family:'IBM Plex Sans',sans-serif !important; background: var(--paper) !important; color: var(--ink) !important; }}
+[data-testid="stTabs"] [data-testid="stImage"] img {{ box-shadow: 0 1rem 2.4rem rgba(0,0,0,.55); }}
 </style>
 """,
     unsafe_allow_html=True,
