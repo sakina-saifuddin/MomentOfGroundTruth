@@ -6,6 +6,7 @@
   <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.x-C8201C?logo=python&logoColor=white"></a>
   <a href="https://pytorch.org/"><img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-models-C8201C?logo=pytorch&logoColor=white"></a>
   <a href="https://streamlit.io/"><img alt="Streamlit" src="https://img.shields.io/badge/Streamlit-app%20included-C8201C?logo=streamlit&logoColor=white"></a>
+  <a href="https://momentofgroundtruth.netlify.app"><img alt="Website" src="https://img.shields.io/badge/Website-deck%20%2B%20live%20game-C8201C"></a>
   <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-not%20specified-555555"></a>
 </p>
 
@@ -15,7 +16,7 @@
 
 **Name meaning:** “Moment of truth” is the instant something is decided, and “ground truth” is the machine learning term for the correct label. Here the correct label is the **CAUSE** of a gas pipeline incident, and pipelines are buried in the ground. The logo is a rubber stamp because every report ends the same way: someone has to stamp a cause on it.
 
-This project reads the written account of a U.S. gas transmission or gathering pipeline incident and predicts its cause from eight categories. The work moves from public incident reports, through three text models, to a Streamlit app that returns a predicted cause, a picture of it, and a SHAP explanation when someone pastes in a narrative.
+This project reads the written account of a U.S. gas transmission or gathering pipeline incident and predicts its cause from eight categories. The work moves from public incident reports, through three text models, to a Streamlit app that returns a predicted cause, a picture of it, and a SHAP explanation when someone pastes in a narrative. The same project is also a presentation website with a demo slide and an audience game (Chapter 6).
 
 <br clear="right">
 
@@ -272,7 +273,7 @@ The deliverable is a Streamlit web app, page title **Moment-of-GroundTruth**. Pa
 - an illustrative photo of what that cause looks like (credits in [docs/images/CREDITS.md](docs/images/CREDITS.md));
 - a **SHAP** explanation that shades each word by how much it pushed the model toward or away from the answer.
 
-Six tabs explain the project in plain language: **Find the cause**, **The story** (why this problem, why the name), **Data & split**, **The models**, **Results** (all the comparison graphs) and **Limits & credits**. Headings use Anton, the logo's typeface (an approximation; the logo itself is a PDF).
+Six tabs explain the project in plain language: **Find the cause**, **The story** (why this problem, why the name), **Data & split**, **The models**, **Results** (all the comparison graphs) and **Limits & credits**. Headings use Anton, the logo's typeface (an approximation; the logo itself is a PDF). The app uses a dark "soil" theme to match the project website: cream text on near-black, the logo's red for the answer, Anton for headings and IBM Plex Sans and Mono for text. The theme is set in `.streamlit/config.toml` and in the CSS block at the top of `app/app.py`.
 
 **Which model is in the app:** frozen BERT-base-uncased with mean pooling and a linear head, trained with Experiment 1 settings (class-weighted loss). The app retrains this small head locally from cached BERT features (`app/build_head.py`), so its test scores (57.9% accuracy, 0.522 macro-F1) are close to, but not identical to, the Colab run in Chapter 5 (0.553 macro-F1). The tracked file `app/artifacts/head.pt` holds only the 6,152-weight head; BERT itself is downloaded from Hugging Face on first run (about 440 MB).
 
@@ -288,27 +289,63 @@ streamlit run app/app.py
 
 Then open http://localhost:8501. To rebuild the head from scratch (needs the data splits in `data/experiment1/`): `python app/build_head.py`.
 
-**Deploy to OCI (VM):** the repository includes a systemd unit and a setup script in `deploy/`. On an Ubuntu VM with at least 4 GB of RAM:
+**Deploy to OCI (VM):** the repository includes systemd units and a setup script in `deploy/`. On an Ubuntu VM with at least 4 GB of RAM:
 
-1. In the OCI console add an ingress rule (TCP 8501) to the VM's security list or network security group.
-2. Clone the repository (URL in Chapter 7), `cd MomentOfGroundTruth`, then run `bash deploy/setup_vm.sh`. It installs dependencies, adds swap, opens the VM firewall and starts the app as a `gt-app` service.
-3. Open `http://<vm-public-ip>:8501`. Put nginx and a certificate in front for HTTPS and a clean URL.
+1. In the OCI console add ingress rules for TCP 8501 (the Streamlit app) and TCP 8000 (the prediction API in `api/server.py`; it is only needed if the website's demo should call the model live).
+2. Clone the repository (URL in Chapter 7), `cd MomentOfGroundTruth`, then run `bash deploy/setup_vm.sh`. It installs dependencies, adds swap, opens the VM firewall for both ports and starts two services: `gt-app` (Streamlit) and `gt-api` (FastAPI served by uvicorn).
+3. Open `http://<vm-public-ip>:8501` for the app. The API health check is `http://<vm-public-ip>:8000/api/health`. Put nginx and a certificate in front for HTTPS and a clean URL.
+
+**Prediction API** (`api/server.py`): the same frozen-BERT model as the app, served as JSON for the website. `GET /api/health`, `GET /api/examples`, `POST /api/predict` (narrative in, probabilities for the eight causes out) and `POST /api/explain` (SHAP word values; one request at a time). Run it locally with `uvicorn api.server:app --port 8000` from the project root.
 
 The Streamlit app has no live URL recorded here yet. It has no login, so restrict the ingress source if it should not be public. Do not commit credentials or private keys.
 
 ### The presentation website
 
-The project deck is also a website: **https://momentofgroundtruth.netlify.app**. Netlify redeploys it on every push to `main` (config in `netlify.toml`; the page is built from `docs/Moment of GroundTruth.html` by `python web/build_web.py`). It adds three things to the deck:
+The project deck is also a website: **https://momentofgroundtruth.netlify.app**. Netlify redeploys it on every push to `main`. `netlify.toml` publishes the `web/` folder, registers the game function and proxies `/api/*` to the OCI VM (port 8000).
 
-- **Live demo slide.** Pick one of eight real held-out test reports and the page shows the stamped cause, the confidence for all 8 causes, the cause photo and the SHAP word shading. These are the real model's saved outputs, so the slide works with no server. The page can call the model live instead: run `bash deploy/setup_vm.sh` on a VM, point `/api` in `netlify.toml` at it and set `LIVE_API_ENABLED = True` in `web/build_web.py`.
-- **Audience game, "Can you beat the model?"** A QR code opens `/play/` on phones, where people pick the cause of one real test report. The next slide shows the live votes against the model, then reveals the correct answer and the model's answer (press `V`; `Shift+X` clears the votes). Votes live in Netlify Blobs through `netlify/functions/game.mjs`. The answers stay on the server until the reveal.
-- **Title-slide stamp animation** and the project stamp as the browser icon.
+The deck has 16 slides, in this order: title, why it matters, the data, the eight causes, experiment design, the three models (BiGRU, BiLSTM, frozen BERT), the pooling result, head-to-head results, per-cause results, the confusion matrix, **the model in action**, **can you beat the model (QR code)**, **the room vs the model (live results)**, and the summary. Its slide text is written in complete sentences; the changes to the original deck wording are listed in `web/copy_edits.py`.
 
-The audience game needs no VM; it runs on Netlify. Reveal and reset use a host key (default in `web/build_web.py`; set a `HOST_KEY` environment variable in Netlify to override it).
+What the website adds to the deck in `docs/`:
+
+- **Title-slide stamp animation.** The stamp flies in from off screen and slams onto the slide with a shake, a flash and two shock rings (press `R` or click the stamp to replay it). The project stamp is also the browser-tab icon.
+- **The model in action (slide 13).** Pick one of eight real held-out test reports and the slide shows the stamped cause, the confidence for all eight causes, the cause photo and the SHAP word shading. These are the real model's saved outputs (`web/saved_results.json`), so the slide works with no server and its badge reads SAVED RUN. To call the model live instead, run the API on the VM, point `/api` in `netlify.toml` at it and set `LIVE_API_ENABLED = True` in `web/build_web.py`.
+- **Audience game (slides 14 and 15).** See below.
+- **Footer fit.** Each slide shrinks slightly when needed so no text sits behind the footer bar.
+
+**Rebuild the site** after changing any file in `web/` (requires Python with `pandas`, `pillow` and `qrcode`):
+
+```text
+python web/build_web.py
+```
+
+| File | Role |
+|---|---|
+| `web/build_web.py` | Builds the three generated files below from `docs/Moment of GroundTruth.html` |
+| `web/copy_edits.py` | Wording changes applied to the original deck (exact-match old and new text) |
+| `web/live_slide.*`, `web/game_slides.html`, `web/game.*`, `web/stamp_anim.*`, `web/fit.js`, `web/deck_fixes.css` | The slides, scripts and styles added to the deck |
+| `web/play_template.html` | Template of the phone page |
+| `web/saved_results.json` | Real model and SHAP outputs for the eight example reports |
+| `web/index.html`, `web/play/index.html`, `netlify/functions/answers.mjs` | Generated by the build; do not edit by hand |
+| `netlify/functions/game.mjs` | The game's server code (a Netlify Function) |
+
+#### Audience game: "Can you beat the model?"
+
+1. Slide 14 shows a QR code to `https://momentofgroundtruth.netlify.app/play/` and a live count of people who have answered. Phones open the page without an app or an account.
+2. Each person reads one real test report and taps the cause they think the investigators recorded. The model has never seen the report. Which report is used is set by `ROUND_PICKS` in `web/build_web.py` (currently Example 2, a corrosion report that the model gets wrong).
+3. Slide 15 shows the live votes as bars. Press `V` (or click **Reveal answers**) to mark the correct answer (a ✓) and the model's answer (an M) and to stamp the verdict. Phones then show each person's own result. Voting closes at the reveal. `Shift+X` deletes all votes for a fresh run.
+
+Votes are stored in Netlify Blobs, one entry per vote, so many phones can vote at once. The correct answer and the model's answer stay on the server until the reveal. Reveal and reset need a host key: the default is in `web/build_web.py`; set a `HOST_KEY` environment variable in Netlify to override it, and open the deck once with `?host=YOUR_KEY` so the browser remembers it. The game needs no VM; it runs on Netlify.
+
+The function accepts `GET ?action=state[&voter=ID]` and `POST` bodies `{action: "vote" | "reveal" | "reset", ...}` at `/.netlify/functions/game`.
+
+### Presentation materials
+
+- `presentation/moment-of-groundtruth-deck.html` is a standalone 3D version of the deck (three.js). Open it in a browser.
+- `presentation/remotion/` is the source of a 4:40 explainer video (the story, the data, the six results, why frozen BERT wins, the limits), built with [Remotion](https://www.remotion.dev/) in the same colors and fonts. Run `npm install` in that folder, then `npm run studio` to preview or `npx remotion render src/index.ts FullStory out/story.mp4` to render it. The rendered video (about 97 MB) is not tracked in the repository. The story scene uses a made-up company name (`COMPANY` in `src/data.ts`); replace it before sharing the video.
 
 ## Chapter 7 — Dig site map
 
-The repository holds the shared data pipeline, all three models, and the combined evaluation. The Streamlit app is in `app/`.
+The repository holds the shared data pipeline, all three models, and the combined evaluation. The Streamlit app is in `app/`, the prediction API in `api/`, and the presentation website in `web/`.
 
 ```text
 .
@@ -318,8 +355,14 @@ The repository holds the shared data pipeline, all three models, and the combine
 |-- scripts/                 data preparation, synthetic data, chart generators
 |-- src/, tests/             shared cleaning and split code with tests
 |-- app/                     Streamlit app: app.py, tabs, SHAP, head.pt, cause photos
-|-- deploy/                  OCI VM setup script and systemd unit
-|-- requirements.txt         app dependencies
+|-- api/                     FastAPI prediction API (server.py)
+|-- deploy/                  OCI VM setup script and systemd units (app and API)
+|-- web/                     presentation website: build script, slides, phone page
+|-- netlify/functions/       audience game function (game.mjs) and its generated answers
+|-- netlify.toml, package.json   Netlify config and the function's one dependency
+|-- presentation/            3D deck copy and the Remotion explainer-video source
+|-- .streamlit/              Streamlit theme
+|-- requirements.txt         app and API dependencies
 |-- evaluation/
 |   |-- compare_models.py    builds the 3-model x 2-experiment comparison
 |   |-- master_results.csv   one row per run (also .json)
@@ -330,7 +373,7 @@ The repository holds the shared data pipeline, all three models, and the combine
 |-- parva/                   BiGRU + FastText code and results
 |-- muhammad/                BiLSTM + attention + FastText code and results
 |-- sakina/                  frozen BERT code, results/ (pooler_output), results_mean_pooling/
-`-- docs/                    logo PDF; images/ holds the logo and README images
+`-- docs/                    logo PDF, the deck (Moment of GroundTruth.html and .md); images/ holds the logo and README images
 ```
 
 The GitHub repository is [`sakina-saifuddin/MomentOfGroundTruth`](https://github.com/sakina-saifuddin/MomentOfGroundTruth):
@@ -373,7 +416,8 @@ Training code and results for each model are in `parva/`, `muhammad/`, and `saki
 - The raw CSV has one `IYEAR` value of 2001 and 88 of 2026. The 2001 report describes an incident on 11-7-2001 discovered on 1-21-02; both it and the partial-year 2026 records are retained.
 - Every run is one seed on a 458-row test set, so small gaps between models are not reliable. Repeating runs over several seeds would show which differences hold.
 - The models were trained with separate code and settings; some differences may come from training choices rather than architecture.
-- The final model choice, the live OCI URL for the Streamlit app and an app screenshot remain TODOs. Only the small app head (`app/artifacts/head.pt`) is tracked; the full model checkpoints from the Colab runs are not.
+- The final model choice, the live OCI URL for the Streamlit app and an app screenshot remain TODOs. The website's demo slide shows saved model outputs; calling the model live needs the API running on the VM. Only the small app head (`app/artifacts/head.pt`) is tracked; the full model checkpoints from the Colab runs are not.
+- Audience game: it gives one anonymous vote per browser (the id is kept in the browser), so someone could vote again from another browser or a private window. The host key has a default stored in the repository unless `HOST_KEY` is set in Netlify. One report is too small a sample to say anything about the model; the game is for engagement, not evidence.
 - App only: narratives over about 350 words are cut at BERT's 512-token limit (about 6% of training narratives exceed it), SHAP explanations are slow, "Other outside force damage" has a sketch instead of a photo, and the pictures illustrate a cause rather than show the incident.
 
 ## Chapter 9 — Crew and credits
@@ -387,6 +431,8 @@ Training code and results for each model are in `parva/`, `muhammad/`, and `saki
 All three crew members share data preparation, cleaning, historical-data merging, splitting, and final analysis.
 
 **Data credit:** Public PHMSA Gas Transmission and Gathering Incident Data, U.S. Department of Transportation, Pipeline and Hazardous Materials Safety Administration. The source narratives are public records; see the [PHMSA data page](https://www.phmsa.dot.gov/data-and-statistics/pipeline/pipeline-incident-20-year-trends).
+
+**Website and video tools:** three.js (3D deck), Remotion (explainer video), Netlify Functions and Blobs (audience game), the `qrcode` Python package (QR code). Fonts are Anton and IBM Plex Sans and Mono from Google Fonts (SIL Open Font License).
 
 ### Image credits
 
