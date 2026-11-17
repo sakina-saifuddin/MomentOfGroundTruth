@@ -727,7 +727,7 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
       <ol class="steps">
         <li><div>Scan this code with your phone camera.<small>You do not need an app or an account.</small></div></li>
         <li><div>Read a real incident report and tap the cause you think the investigators recorded.<small>It takes about twenty seconds.</small></div></li>
-        <li><div>Watch the next slide to see how the room did against the model.<small>The true cause is revealed there, next to the model's answer.</small></div></li>
+        <li><div>Watch the next slide to see how the room did against the model.<small>The correct answer appears there, next to the model's answer.</small></div></li>
       </ol>
       <div class="gv-stats">
         <div class="gv-big"><span class="big" id="gv-voters">0</span><span class="lab">people have answered</span></div>
@@ -752,7 +752,7 @@ body.sheet #deck,body.sheet #hud,body.sheet #bg,body.sheet #shade{display:none}
       <button id="gm-refresh" class="lv-btn ghost">Refresh now</button>
       <span class="gr-score" id="gr-score"></span>
       <span id="gr-verdict"></span>
-      <span class="gr-legend lab"><i class="lg t">✓</i> is the true cause, <i class="lg m">M</i> is the model's answer, and each bar is a share of the votes.</span>
+      <span class="gr-legend lab"><i class="lg t">✓</i> marks the correct answer, <i class="lg m">M</i> marks the model's answer, and each bar shows how many people chose it.</span>
     </div>
   </div>
 </section>
@@ -818,7 +818,7 @@ const PLAN=[
  {w:'muhammad',t:50,title:'Confusion matrix',say:['Row percentages, so each row is the share of that true cause.','BERT Exp 1: 69% of corrosion reports are right, but 20% are called material failure. Equipment is confused with material failure and incorrect operation.','Incorrect operation goes to equipment failure 28% of the time. Switch models to show the pattern is shared.']},
  {w:'sakina',t:55,title:'App and live demo',say:['The demo is on this slide, so there is no need to switch windows. Pick one of the eight reports; these are the real saved outputs of the model on held-out test reports.','Show the stamped cause and confidence, the photo, then SHAP shading. SHAP takes 15 to 40 seconds, so start it, then talk.','App uses frozen BERT, mean pooling, Exp 1 settings. Head retrained locally: 57.9% accuracy, 0.522 macro-F1.']},
  {w:'muhammad',t:40,title:'Beat the model',say:['Ask everyone to take out their phones and scan the code.','Explain that the report comes from the test set and that the model has never seen it.','Watch the counter, and move on when it stops growing.']},
- {w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the true cause and the answer the model gave.','Point out where the room split and how confident the model was.','Press Shift+X afterwards to wipe the votes for a fresh run.']},
+ {w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the correct answer and the answer the model gave.','Point out where the room split and how confident the model was.','Press Shift+X afterwards to wipe the votes for a fresh run.']},
  {w:'all',t:10,title:'Close',say:['Best: frozen BERT with mean pooling, 0.553 macro-F1 and 60.3% accuracy. Pooling choice alone was worth 0.25. Rare causes remain the hard part.','Thank you. Questions?']}
 ];
 const total=PLAN.reduce((a,b)=>a+b.t,0);
@@ -1193,7 +1193,7 @@ const GAME_ROUNDS=[{"text": "the pipeline was excavated and two shovel blades we
         const pct=tot?Math.round(100*n/tot):0,isT=a&&a.truth===k,isM=a&&a.model===k;
         return `<div class="gr-row${isT?' truth':''}${tot&&k===top?' top':''}"><span class="n">${SHORT[k]}</span><div class="tr"><div class="fl" style="width:${Math.round(100*n/mx)}%"></div></div><span class="p">${pct}%</span><span class="mk">${isT?'<i class="t">✓</i>':''}${isM?'<i class="m">M</i>':''}</span></div>`;
       }).join('');
-      const res=a?`<b>${tot?Math.round(100*c.counts[a.truth]/tot):0}%</b> of the room chose the true cause. The model ${a.model===a.truth?'chose it too':'chose something else'}, with <b>${Math.round(a.conf*100)}%</b> confidence.`:'';
+      const res=a?`<b>${tot?Math.round(100*c.counts[a.truth]/tot):0}%</b> of the room chose the correct answer. The model ${a.model===a.truth?'chose the same answer':'chose a different answer'}, with <b>${Math.round(a.conf*100)}%</b> confidence.`:'';
       const card=one?`<div class="gr-rep paper"><div class="lab" style="color:#5a5143">The report · what caused it?</div><p>${esc(rd.text)}</p></div>`:'';
       return card+`<div class="gr-col"><div class="gr-h"><b>${one?'The votes':'Report '+(i+1)}</b><span class="lab">${tot} answers</span></div>${one?'':`<p class="gr-ex">${esc(rd.excerpt)}</p>`}<div><div class="gr-rows">${rows}</div><div class="gr-res" style="margin-top:.5rem">${res}</div></div></div>`;
     }).join('');
@@ -1208,7 +1208,7 @@ const GAME_ROUNDS=[{"text": "the pipeline was excavated and two shovel blades we
       avg+=c.total?c.counts[a.truth]/c.total:0;
     });
     const n=st.answers.length;
-    score.textContent=n===1?`${Math.round(100*avg)}% of the room chose the right cause, and the model ${model?'did too':'did not'}.`:`Crowd vote ${crowd}/${n} · Model ${model}/${n} · average person ${Math.round(100*avg/n)}% right`;
+    score.textContent=n===1?`${Math.round(100*avg)}% of the room answered correctly, and the model's answer was ${model?'correct':'not correct'}.`:`Crowd vote ${crowd}/${n} · Model ${model}/${n} · average person ${Math.round(100*avg/n)}% right`;
     const v=crowd>model?'The crowd wins':crowd<model?'The model wins':n===1?(model?'Both got it':'Both fooled'):'Dead heat';
     if(v!==shownVerdict){vd.innerHTML=`<span class="gm-stamp">${v}</span>`;shownVerdict=v}
   }
@@ -1293,7 +1293,7 @@ const GAME_ROUNDS=[{"text": "the pipeline was excavated and two shovel blades we
     const top=res.top,C=OFFLINE.causes[top],pr=res.probs,ex=exOf(ta.value);
     const order=[...pr.keys()].sort((a,b)=>pr[b]-pr[a]);
     const photo=PHOTO[top]!==undefined?`<div class="frame"><img src="${IMG[PHOTO[top]]}" alt="${esc(C.title)}"></div>`:`<div class="frame"><div class="none">No photo for this cause</div></div>`;
-    const badge=ex?`<span class="lv-badge">The recorded cause is <b>${esc(OFFLINE.titles[OFFLINE.labels.indexOf(ex.truth)])}</b>, and the model got it <b>${OFFLINE.labels.indexOf(ex.truth)===top?'right':'wrong'}</b>.</span>`:'';
+    const badge=ex?`<span class="lv-badge">The correct answer is <b>${esc(OFFLINE.titles[OFFLINE.labels.indexOf(ex.truth)])}</b>, and the model got it <b>${OFFLINE.labels.indexOf(ex.truth)===top?'right':'wrong'}</b>.</span>`:'';
     out.innerHTML=`
       <div class="lv-top"><div class="lv-hd"><div class="lv-stamp">${esc(C.title)}</div><div class="lv-conf"><span class="big">${Math.round(pr[top]*100)}%</span><span class="lab">model confidence</span></div></div>
         <figure class="lv-photo">${photo}<figcaption class="credit" title="${esc(C.caption||'')}">${esc(C.caption||'')}</figcaption></figure></div>

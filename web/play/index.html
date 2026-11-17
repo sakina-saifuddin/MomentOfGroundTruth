@@ -161,17 +161,17 @@ function showResults(){
     const c=counts[i],tot=c.total||1,share=Math.round(100*c.counts[a.truth]/tot);
     const ok=picks[i]===a.truth;if(ok)me++;if(a.model===a.truth)model++;crowd+=c.counts[a.truth]/tot;
     return `<div class="res"><h3>Report ${i+1}</h3>
-      <p>The true cause was <b style="color:var(--text)">${esc(CAUSES[a.truth].title)}</b>.</p>
+      <p>The correct answer was <b style="color:var(--text)">${esc(CAUSES[a.truth].title)}</b>.</p>
       <div class="tags">
-        <span class="tag ${ok?'y':''}">You: ${picks[i]>=0?esc(CAUSES[picks[i]].title):'—'} ${picks[i]>=0?(ok?'✓':'✗'):''}</span>
-        <span class="tag m">Model: ${esc(CAUSES[a.model].title)} ${a.model===a.truth?'✓':'✗'}</span>
+        <span class="tag ${ok?'y':''}">Your answer: ${picks[i]>=0?esc(CAUSES[picks[i]].title):'—'} ${picks[i]>=0?(ok?'✓':'✗'):''}</span>
+        <span class="tag m">Model's answer: ${esc(CAUSES[a.model].title)} ${a.model===a.truth?'✓':'✗'}</span>
       </div>
-      <p style="margin-top:.4rem">${share}% of the room chose the right cause.</p></div>`;
+      <p style="margin-top:.4rem">${share}% of the room chose the correct answer.</p></div>`;
   }).join('');
   const verdict=me>model?'You beat the model':me<model?'The model wins':answers.length===1?(me?'Both got it':'Both fooled'):'Dead heat';
   const avg=Math.round(100*crowd/answers.length);
   $('#results').innerHTML=`<div class="stampbox"><span class="verdict">${verdict}</span></div>
-    <p class="lede">${answers.length===1?`You ${me?'chose the right cause':'did not choose the right cause'}, and the model ${model?'did':'did not'}. ${avg}% of the room was right.`:`You got <b style="color:var(--text)">${me} of ${answers.length}</b> right, the model got <b style="color:var(--text)">${model} of ${answers.length}</b>, and the room averaged <b style="color:var(--text)">${avg}%</b>.`}</p>${rows}`;
+    <p class="lede">${answers.length===1?`Your answer was ${me?'correct':'not correct'}, and the model's answer was ${model?'correct':'not correct'}. ${avg}% of the room answered correctly.`:`You got <b style="color:var(--text)">${me} of ${answers.length}</b> right, the model got <b style="color:var(--text)">${model} of ${answers.length}</b>, and the room averaged <b style="color:var(--text)">${avg}%</b>.`}</p>${rows}`;
   scrollTo({top:$('#results').offsetTop-20,behavior:'smooth'});
 }
 

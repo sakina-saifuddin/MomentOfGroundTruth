@@ -169,7 +169,7 @@ def main() -> None:
     # the speaker plan: two new entries after the live demo, before the close
     new_plan = (
         "{w:'muhammad',t:40,title:'Beat the model',say:['Ask everyone to take out their phones and scan the code.','Explain that the report comes from the test set and that the model has never seen it.','Watch the counter, and move on when it stops growing.']},\n "
-        "{w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the true cause and the answer the model gave.','Point out where the room split and how confident the model was.','Press Shift+X afterwards to wipe the votes for a fresh run.']},\n "
+        "{w:'muhammad',t:60,title:'Crowd vs model',say:['Press V or click Reveal to show the correct answer and the answer the model gave.','Point out where the room split and how confident the model was.','Press Shift+X afterwards to wipe the votes for a fresh run.']},\n "
     )
     html, n = re.subn(r"(\{w:'all',t:\d+,title:'Close')", lambda m: new_plan + m.group(1), html, count=1)
     assert n == 1, "plan entry not found"

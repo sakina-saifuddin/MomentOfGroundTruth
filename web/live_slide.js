@@ -59,7 +59,7 @@
     const top=res.top,C=OFFLINE.causes[top],pr=res.probs,ex=exOf(ta.value);
     const order=[...pr.keys()].sort((a,b)=>pr[b]-pr[a]);
     const photo=PHOTO[top]!==undefined?`<div class="frame"><img src="${IMG[PHOTO[top]]}" alt="${esc(C.title)}"></div>`:`<div class="frame"><div class="none">No photo for this cause</div></div>`;
-    const badge=ex?`<span class="lv-badge">The recorded cause is <b>${esc(OFFLINE.titles[OFFLINE.labels.indexOf(ex.truth)])}</b>, and the model got it <b>${OFFLINE.labels.indexOf(ex.truth)===top?'right':'wrong'}</b>.</span>`:'';
+    const badge=ex?`<span class="lv-badge">The correct answer is <b>${esc(OFFLINE.titles[OFFLINE.labels.indexOf(ex.truth)])}</b>, and the model got it <b>${OFFLINE.labels.indexOf(ex.truth)===top?'right':'wrong'}</b>.</span>`:'';
     out.innerHTML=`
       <div class="lv-top"><div class="lv-hd"><div class="lv-stamp">${esc(C.title)}</div><div class="lv-conf"><span class="big">${Math.round(pr[top]*100)}%</span><span class="lab">model confidence</span></div></div>
         <figure class="lv-photo">${photo}<figcaption class="credit" title="${esc(C.caption||'')}">${esc(C.caption||'')}</figcaption></figure></div>
