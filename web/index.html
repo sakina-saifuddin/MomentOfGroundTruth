@@ -609,6 +609,17 @@ p:empty{display:none}
   </div>
 </section>
 
+<section class="slide s-cause" id="s4">
+  <p class="eyebrow"><b>2 · The data and the test</b><i></i>Drag the cards to read real examples</p>
+  <h2>The eight causes the model chooses from</h2>
+  <div class="body">
+    <div class="ring-stage" id="ringstage">
+      <div class="ring" id="ring"></div>
+      <div class="ringnav"><button id="rprev" aria-label="Previous cause">&#8592;</button><span class="pill" id="rcount">1 / 8</span><button id="rnext" aria-label="Next cause">&#8594;</button></div>
+    </div>
+  </div>
+</section>
+
 <section class="slide s-flow" id="s5">
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>How we test</p>
   <h2>Every model is tested on <em>reports it never saw</em></h2>
@@ -768,17 +779,6 @@ p:empty{display:none}
   <p class="endnote">One run per model on 458 test reports. Data: U.S. DOT PHMSA. Photos: Wikimedia Commons and NTSB; credits in the repository.</p>
 </section>
 
-<section class="slide s-cause" id="s4">
-  <p class="eyebrow"><b>Backup</b><i></i>Drag the cards to read real examples</p>
-  <h2>The eight causes the model chooses from</h2>
-  <div class="body">
-    <div class="ring-stage" id="ringstage">
-      <div class="ring" id="ring"></div>
-      <div class="ringnav"><button id="rprev" aria-label="Previous cause">&#8592;</button><span class="pill" id="rcount">1 / 8</span><button id="rnext" aria-label="Next cause">&#8594;</button></div>
-    </div>
-  </div>
-</section>
-
 <section class="slide s-heat" id="s11">
   <p class="eyebrow"><b>Backup</b><i></i>Click a row to see precision and recall</p>
   <h2>Clear causes are <em>easy</em>, and vague ones are not</h2>
@@ -843,6 +843,7 @@ const PLAN=[
  {w:"sakina",t:20,title:"Title",say:["Introduce the team: Parva built the BiGRU, Muhammad the BiLSTM with attention, and Sakina the frozen BERT.", "Give the plan in one breath: the problem, the data, the three models, the results, and then a short game."]},
  {w:"sakina",t:45,title:"The problem",say:["Point at the pulsing numbers: San Bruno in 2010 killed 8 people and Carlsbad in 2000 killed 12.", "After every incident the operator files a written report within 30 days, and the cause is described somewhere in that text.", "Our question is whether a model can read the report and name the cause automatically."]},
  {w:"parva",t:50,title:"The data",say:["We have 3,044 real reports from the public PHMSA incident file, and the model reads only the narrative.", "Point at the two glowing bars: equipment failure has 787 reports and incorrect operation has 165, about 4.8 times fewer.", "That is the imbalance. A model could look accurate just by guessing the common causes, so we have to handle it."]},
+ {w:"parva",t:40,title:"The eight causes",say:["These are the eight causes the model has to choose from. Drag the cards to read a real example of each one.", "Say that every report has exactly one of these causes, and the model must pick it from the written story alone."]},
  {w:"parva",t:50,title:"The test",say:["We split the reports once, 70 / 15 / 15, and all three models use the same split. Point at the test block: the model never sees those reports until the end.", "The validation reports are for tuning and for stopping training early, and the test reports are used only once.", "To handle the imbalance we ran two experiments. Press the Exp 2 button and point at the blinking hatched bars: 681 synthetic reports that an AI assistant wrote from training reports only."]},
  {w:"parva",t:55,title:"BiGRU",say:["Why we chose it: it reads a report word by word in both directions, and it is simple and fast, so it is our baseline. It finished third.", "Settings and why: the FastText vectors are frozen because they already know English, including technical words. Dropout of 0.3 and early stopping on validation macro-F1 stop it from memorizing the training reports. Adam with a learning rate of 0.001 is the usual starting point for recurrent models.", "Point at the pulsing number: synthetic data raised accuracy by 7.6 points, but macro-F1 only by 0.007, so it did not really help the rare causes."]},
  {w:"muhammad",t:55,title:"BiLSTM with attention",say:["Why we chose it: reports are long, about a thousand characters, and attention lets the model give more weight to the few words that point to the cause, such as corrosion or backhoe. It finished second.", "Settings and why: exactly the same settings as the BiGRU, so any difference comes from attention and not from tuning.", "The brighter run is Experiment 1, and the fainter one is Experiment 2. Synthetic data lowered its macro-F1 by 0.067. Point at 0.729: the best corrosion score of any run."]},
@@ -852,7 +853,6 @@ const PLAN=[
  {w:"muhammad",t:40,title:"Beat the model",say:["Ask everyone to take out their phones and scan the code.", "Say why we play: we want to see how hard this task is for a person, because that tells us whether our model's score is good.", "The report comes from the test set, so the model has never seen it. Watch the pulsing counter, and move on when it stops growing."]},
  {w:"muhammad",t:80,title:"Crowd vs model",say:["Press V or click Reveal. The glowing row is the correct answer, and the blinking M is the model's answer.", "Whatever the result, tie it back to the findings: if people disagree, the labels are ambiguous, and that limits every model, not just ours.", "One report is only an illustration, not evidence. Press Shift+X afterwards to wipe the votes."]},
  {w:"all",t:40,title:"Summary",say:["Frozen BERT with mean pooling worked best. Walk through the three charts, each with the best bar glowing.", "It generalized best: its score dropped the least from validation to test. It was strongest on the rare causes. And the way we summarized each report mattered most.", "The caveat: each model ran once on 458 test reports, so small gaps are not reliable. Then thank the audience and take questions."]},
- {w:"parva",t:0,title:"Backup: the eight causes",say:["Backup slide for questions. Drag the cards to read real examples of each cause."]},
  {w:"muhammad",t:0,title:"Backup: per-cause results",say:["Backup slide. Excavation damage is easiest because its reports name the equipment. Other incident cause is hardest because its reports are vague. BERT is strongest on the rare causes."]},
  {w:"muhammad",t:0,title:"Backup: errors",say:["Backup slide. Each row shows how reports of one true cause were classified. For BERT with class weights, 69 percent of corrosion reports are right but 20 percent are called material failure."]}
 ];

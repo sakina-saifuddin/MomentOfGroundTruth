@@ -118,7 +118,7 @@ EDITS: list[tuple[str, str]] = [
 
     # ---------- backup slides
     ('<p class="eyebrow"><b>The labels</b><i></i>Drag, click a card, or use the arrows</p>',
-     '<p class="eyebrow"><b>Backup</b><i></i>Drag the cards to read real examples</p>'),
+     '<p class="eyebrow"><b>2 · The data and the test</b><i></i>Drag the cards to read real examples</p>'),
     ("<h2>Each cause, in the <em>operators' own words</em></h2>", "<h2>The eight causes the model chooses from</h2>"),
     ('<p class="eyebrow"><b>Per-cause results</b><i></i>Test F1 · click a row for precision and recall</p>',
      '<p class="eyebrow"><b>Backup</b><i></i>Click a row to see precision and recall</p>'),
@@ -137,7 +137,7 @@ EDITS: list[tuple[str, str]] = [
 
 # slide order, as the story is told (ids are the section ids in the deck). The demo slide (s14) is not in the
 # website; the backup slides come after the summary.
-ORDER = ["s1", "s2", "s3", "s5", "s6", "s7", "s8", "s9", "s10", "sv", "sr", "s16", "s4", "s11", "s12"]
+ORDER = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "sv", "sr", "s16", "s11", "s12"]
 
 # the speaker plan, in the same order: (who, seconds, title, notes). The main talk is about 10 minutes, which
 # leaves five for the audience game and questions inside the 15-minute slot. Backup slides have no time.
@@ -153,6 +153,9 @@ PLAN = [
      ["We have 3,044 real reports from the public PHMSA incident file, and the model reads only the narrative.",
       "Point at the two glowing bars: equipment failure has 787 reports and incorrect operation has 165, about 4.8 times fewer.",
       "That is the imbalance. A model could look accurate just by guessing the common causes, so we have to handle it."]),
+    ("parva", 40, "The eight causes",
+     ["These are the eight causes the model has to choose from. Drag the cards to read a real example of each one.",
+      "Say that every report has exactly one of these causes, and the model must pick it from the written story alone."]),
     ("parva", 50, "The test",
      ["We split the reports once, 70 / 15 / 15, and all three models use the same split. Point at the test block: the model never sees those reports until the end.",
       "The validation reports are for tuning and for stopping training early, and the test reports are used only once.",
@@ -189,8 +192,6 @@ PLAN = [
      ["Frozen BERT with mean pooling worked best. Walk through the three charts, each with the best bar glowing.",
       "It generalized best: its score dropped the least from validation to test. It was strongest on the rare causes. And the way we summarized each report mattered most.",
       "The caveat: each model ran once on 458 test reports, so small gaps are not reliable. Then thank the audience and take questions."]),
-    ("parva", 0, "Backup: the eight causes",
-     ["Backup slide for questions. Drag the cards to read real examples of each cause."]),
     ("muhammad", 0, "Backup: per-cause results",
      ["Backup slide. Excavation damage is easiest because its reports name the equipment. Other incident cause is hardest because its reports are vague. BERT is strongest on the rare causes."]),
     ("muhammad", 0, "Backup: errors",
