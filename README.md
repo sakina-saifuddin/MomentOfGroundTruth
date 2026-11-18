@@ -303,7 +303,7 @@ The Streamlit app has no login, so restrict the ingress source if it should not 
 
 The project deck is also a website: **https://momentofgroundtruth.netlify.app**. Netlify redeploys it on every push to `main`. `netlify.toml` publishes the `web/` folder, registers the game function and proxies `/api/*` to the OCI VM (port 8000).
 
-The deck tells the project as a short story for a 15-minute talk that includes the audience game. It has 13 slides plus 2 backup slides: **1 The problem** (why it matters), **2 The data and the test** (the 3,044 reports and their imbalance, the eight causes the model chooses from, the shared split and the two experiments), **3 The models** (BiGRU, BiLSTM with attention and frozen BERT in the order we tried them, then the pooling choice that mattered most), **4 The results** (head to head), **5 Your turn** (the audience game) and **6 The takeaway** (why frozen BERT worked best). The per-cause results and the confusion matrix are backup slides after the summary, for questions.
+The deck tells the project as a short story for a 15-minute talk that includes the audience game. It has 15 slides plus 2 backup slides: **1 The problem** (why it matters), **2 The data and the test** (the 3,044 reports and their imbalance, the eight causes the model chooses from, one slide for each of the two experiments (class weights and smart oversampling), the shared split and the two experiments), **3 The models** (BiGRU, BiLSTM with attention and frozen BERT in the order we tried them, then the pooling choice that mattered most), **4 The results** (head to head), **5 Your turn** (the audience game) and **6 The takeaway** (why frozen BERT worked best). The per-cause results and the confusion matrix are backup slides after the summary, for questions.
 
 The slides use figures and numbers instead of paragraphs: each slide has one short headline. The numbers being discussed pulse, the best model gets its own spinning gold and red outline and a "#1 BEST" badge, and the weaker run fades back (styles in `web/story.css`, behaviour in `web/spot.js`). The reasons for every choice (why attention, why a frozen BERT, why these settings) are in the speaker notes, which you can open with `N`. The wording, the slide order and the speaker plan are defined in `web/copy_edits.py`.
 
@@ -311,7 +311,7 @@ What the website adds to the deck in `docs/`:
 
 - **Title-slide stamp animation.** The stamp flies in from off screen and slams onto the slide with a shake, a flash and two shock rings (press `R` or click the stamp to replay it). The project stamp is also the browser-tab icon.
 - **Highlights and a visual summary.** Pulsing key numbers, a winner outline on the head-to-head chart, rank badges on the model slides, and a closing slide with three small charts (generalization, rare causes, pooling) drawn from `evaluation/master_results.json`.
-- **Audience game (slides 11 and 12).** See below.
+- **Audience game (slides 13 and 14).** See below.
 - **Footer fit.** Each slide shrinks slightly when needed so no text sits behind the footer bar.
 - **Live demo slide (optional).** `web/live_slide.*` builds a slide where you pick one of eight real test reports and see the stamped cause, the confidence for all causes and the SHAP word shading, from saved model outputs (`web/saved_results.json`). It is not in the 15-minute deck; add `"s14"` to `ORDER` in `web/copy_edits.py` to bring it back. To make it call the model live, run the API on the VM, point `/api` in `netlify.toml` at it and set `LIVE_API_ENABLED = True` in `web/build_web.py`.
 
@@ -334,9 +334,9 @@ python web/build_web.py
 
 #### Audience game: "Can you beat the model?"
 
-1. Slide 11 shows a QR code to `https://momentofgroundtruth.netlify.app/play/` and a live count of people who have answered. Phones open the page without an app or an account.
+1. Slide 13 shows a QR code to `https://momentofgroundtruth.netlify.app/play/` and a live count of people who have answered. Phones open the page without an app or an account.
 2. Each person reads one real test report and taps the cause they think the investigators recorded. The model has never seen the report. Which report is used is set by `ROUND_PICKS` in `web/build_web.py` (currently Example 2, a corrosion report that the model gets wrong).
-3. Slide 12 shows the live votes as bars. Press `V` (or click **Reveal answers**) to mark the correct answer (a ✓) and the model's answer (an M) and to stamp the verdict. Phones then show each person's own result. Voting closes at the reveal. `Shift+X` deletes all votes for a fresh run.
+3. Slide 14 shows the live votes as bars. Press `V` (or click **Reveal answers**) to mark the correct answer (a ✓) and the model's answer (an M) and to stamp the verdict. Phones then show each person's own result. Voting closes at the reveal. `Shift+X` deletes all votes for a fresh run.
 
 Votes are stored in Netlify Blobs, one entry per vote, so many phones can vote at once. The correct answer and the model's answer stay on the server until the reveal. Reveal and reset need a host key: the default is in `web/build_web.py`; set a `HOST_KEY` environment variable in Netlify to override it, and open the deck once with `?host=YOUR_KEY` so the browser remembers it. The game needs no VM; it runs on Netlify.
 

@@ -539,6 +539,32 @@ p:empty{display:none}
 .s-res .gr-row.truth{animation:rowGlow 1.4s ease-in-out infinite}
 .s-res .mk i.m{animation:blink 1.1s steps(2,end) infinite}
 .s-vote #gv-voters{display:inline-block;animation:hlPulse 1.8s ease-in-out infinite}
+
+/* the two experiment slides */
+.s-exp .xgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:2.4rem;align-items:start;margin-top:1.2rem}
+.s-exp .xcard h3{font-family:var(--f-display);font-weight:400;font-size:1.5rem;letter-spacing:.02em;text-transform:uppercase;border-bottom:3px solid var(--text);padding-bottom:.6rem}
+.s-exp .xbars{display:grid;gap:.5rem;margin-top:.9rem;position:relative}
+.xr{display:grid;grid-template-columns:6.4rem minmax(0,1fr) 3.2rem;gap:.7rem;align-items:center}
+.xr .n{font-size:.88rem;font-weight:600}
+.xr .t{display:block;height:1.3rem;background:rgba(239,232,218,.08);position:relative}
+.xr .f{display:block;height:100%;width:var(--w);background:rgba(239,232,218,.55)}
+.xr .f.syn{position:absolute;top:0;background:repeating-linear-gradient(135deg,var(--stamp) 0 5px,rgba(0,0,0,.35) 5px 8px)}
+.xr .v{font-family:var(--f-display);font-weight:400;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.xr.hot .f{background:var(--stamp)}
+.xr.hot .v{color:var(--stamp)}
+.s-exp.on .xr .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both}
+.s-exp.on .xr.hot .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both,glow 1.6s 1.3s ease-in-out infinite}
+.s-exp .xbars.stack .tgt{position:absolute;top:0;bottom:0;left:calc(7.1rem + (100% - 12.4rem) * var(--target) / 100);border-left:2px dashed var(--text);pointer-events:none}
+.s-exp .tgt em{position:absolute;top:-1.2rem;left:.3rem;font:normal .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.s-exp .cap{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:1rem}
+.s-exp .key{display:inline-block;width:.9rem;height:.9rem;background:rgba(239,232,218,.55);vertical-align:-.1rem}
+.s-exp .key.syn{background:repeating-linear-gradient(135deg,var(--stamp) 0 4px,rgba(0,0,0,.35) 4px 6px)}
+.s-exp .xside{display:grid;gap:1rem}
+.s-exp .xfact{border-top:3px solid var(--text);padding-top:.6rem;display:grid;gap:.2rem}
+.s-exp .xfact .big{font-family:var(--f-display);font-weight:400;font-size:2.6rem;line-height:1}
+.s-exp .xfact .api{font-family:var(--f-display);font-weight:400;font-size:1.5rem;letter-spacing:.02em;text-transform:uppercase}
+.s-exp .xfact code{font-family:var(--f-mono);font-size:1rem;color:var(--stamp)}
+.s-exp .xfact span{font-size:.92rem;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:900px){
   .slide{padding:1.6rem 1.2rem 4rem;overflow:auto}
@@ -639,6 +665,35 @@ p:empty{display:none}
         <div class="seg" role="group" aria-label="Experiment"><button aria-pressed="true" data-x="1">Exp 1 · class weights</button><button aria-pressed="false" data-x="2">Exp 2 · oversampling</button></div></div>
       <div id="xbars"></div>
       <p class="xnote" id="xnote"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide s-exp" id="e1">
+  <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 1</p>
+  <h2>Experiment 1: a mistake on a rare cause <em>costs more</em></h2>
+  <div class="body xgrid">
+    <div class="xcard"><h3>Weight given to each cause</h3><div class="xbars"><div class="xr hot"><span class="n">Equipment</span><span class="t"><i class="f" style="--w:21%"></i></span><b class="v">0.48</b></div><div class="xr"><span class="n">Corrosion</span><span class="t"><i class="f" style="--w:25%"></i></span><b class="v">0.58</b></div><div class="xr"><span class="n">Material</span><span class="t"><i class="f" style="--w:44%"></i></span><b class="v">1.02</b></div><div class="xr"><span class="n">Excavation</span><span class="t"><i class="f" style="--w:45%"></i></span><b class="v">1.05</b></div><div class="xr"><span class="n">Natural force</span><span class="t"><i class="f" style="--w:55%"></i></span><b class="v">1.26</b></div><div class="xr"><span class="n">Other outside</span><span class="t"><i class="f" style="--w:78%"></i></span><b class="v">1.81</b></div><div class="xr"><span class="n">Other cause</span><span class="t"><i class="f" style="--w:86%"></i></span><b class="v">2.00</b></div><div class="xr hot"><span class="n">Incorrect op.</span><span class="t"><i class="f" style="--w:100%"></i></span><b class="v">2.32</b></div></div>
+      <span class="cap">Weight = 2,130 ÷ (8 × the reports of that cause)</span></div>
+    <div class="xside">
+      <div class="xfact"><b class="big">2,130</b><span>real training reports, nothing added</span></div>
+      <div class="xfact"><b class="big pulse">4.8×</b><span>cost of a mistake on incorrect operation vs equipment failure</span></div>
+      <div class="xfact"><code>CrossEntropyLoss(weight=…)</code><span>the only thing that changes in training</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide s-exp" id="e2">
+  <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 2</p>
+  <h2>Experiment 2: we <em>add reports</em> for the rare causes</h2>
+  <div class="body xgrid">
+    <div class="xcard"><h3>Training reports per cause</h3><div class="xbars stack" style="--target:54.4"><div class="xr"><span class="n">Equipment</span><span class="t"><i class="f" style="--w:100.0%"></i><i class="f syn" style="--w:0.0%;left:100.0%"></i></span><b class="v">551</b></div><div class="xr"><span class="n">Corrosion</span><span class="t"><i class="f" style="--w:83.5%"></i><i class="f syn" style="--w:0.0%;left:83.5%"></i></span><b class="v">460</b></div><div class="xr"><span class="n">Material</span><span class="t"><i class="f" style="--w:47.2%"></i><i class="f syn" style="--w:7.3%;left:47.2%"></i></span><b class="v">+40</b></div><div class="xr"><span class="n">Excavation</span><span class="t"><i class="f" style="--w:45.9%"></i><i class="f syn" style="--w:8.5%;left:45.9%"></i></span><b class="v">+47</b></div><div class="xr"><span class="n">Natural force</span><span class="t"><i class="f" style="--w:38.3%"></i><i class="f syn" style="--w:16.2%;left:38.3%"></i></span><b class="v">+89</b></div><div class="xr"><span class="n">Other outside</span><span class="t"><i class="f" style="--w:26.7%"></i><i class="f syn" style="--w:27.8%;left:26.7%"></i></span><b class="v">+153</b></div><div class="xr"><span class="n">Other cause</span><span class="t"><i class="f" style="--w:24.1%"></i><i class="f syn" style="--w:30.3%;left:24.1%"></i></span><b class="v">+167</b></div><div class="xr"><span class="n">Incorrect op.</span><span class="t"><i class="f" style="--w:20.9%"></i><i class="f syn" style="--w:33.6%;left:20.9%"></i></span><b class="v">+185</b></div><i class="tgt"><em>300 goal</em></i></div>
+      <span class="cap"><i class="key"></i>real &nbsp; <i class="key syn"></i>synthetic, written by a language model</span></div>
+    <div class="xside">
+      <div class="xfact"><b class="big pulse">+681</b><span>synthetic reports: 2,130 real become 2,811 in training</span></div>
+      <div class="xfact"><b class="api">Gemini API · Groq API</b><span>gemini-3.5-flash, gpt-oss-120b, gpt-oss-20b and Qwen wrote them, 3 real examples per prompt</span></div>
+      <div class="xfact"><b class="api">4 checks</b><span>lowercase, 50+ words, no copy, cause name not mentioned</span></div>
+      <div class="xfact"><b class="api">No class weights</b><span>plain loss; validation and test stay real</span></div>
     </div>
   </div>
 </section>
@@ -845,6 +900,8 @@ const PLAN=[
  {w:"parva",t:50,title:"The data",say:["We have 3,044 real reports from the public PHMSA incident file, and the model reads only the narrative.", "Point at the two glowing bars: equipment failure has 787 reports and incorrect operation has 165, about 4.8 times fewer.", "That is the imbalance. A model could look accurate just by guessing the common causes, so we have to handle it."]},
  {w:"parva",t:40,title:"The eight causes",say:["These are the eight causes the model has to choose from. Drag the cards to read a real example of each one.", "Say that every report has exactly one of these causes, and the model must pick it from the written story alone."]},
  {w:"parva",t:50,title:"The test",say:["We split the reports once, 70 / 15 / 15, and all three models use the same split. Point at the test block: the model never sees those reports until the end.", "The validation reports are for tuning and for stopping training early, and the test reports are used only once.", "To handle the imbalance we ran two experiments. Press the Exp 2 button and point at the blinking hatched bars: 681 synthetic reports that an AI assistant wrote from training reports only."]},
+ {w:"parva",t:45,title:"Experiment 1: class weights",say:["Why we need it: some causes have far fewer reports, so a model can ignore them and still look good.", "Experiment 1 keeps the 2,130 real training reports and changes the loss. Each cause gets a weight: the total number of reports divided by 8 times the number of reports in that cause.", "Point at the pulsing 4.8: a mistake on incorrect operation costs about 4.8 times more than a mistake on equipment failure, so the model has to pay attention to the rare causes. In code this is the weight argument of CrossEntropyLoss."]},
+ {w:"parva",t:55,title:"Experiment 2: smart oversampling",say:["Experiment 2 fixes the imbalance with data instead. We use no class weights here.", "We wrote 681 synthetic reports with language-model APIs: the Gemini API and the Groq API, which ran gpt-oss and Qwen models. Each prompt showed the model 3 real training reports of one cause and asked for a new one in the same style.", "A report was thrown away unless it was lowercase, at least 50 words, not a copy, and did not name the cause. The goal was at least 300 training reports per cause, which is the dashed line.", "Only training reports were used to write them. Validation and test stay untouched, so both experiments are tested on the same real reports."]},
  {w:"parva",t:55,title:"BiGRU",say:["Why we chose it: it reads a report word by word in both directions, and it is simple and fast, so it is our baseline. It finished third.", "Settings and why: the FastText vectors are frozen because they already know English, including technical words. Dropout of 0.3 and early stopping on validation macro-F1 stop it from memorizing the training reports. Adam with a learning rate of 0.001 is the usual starting point for recurrent models.", "Point at the pulsing number: synthetic data raised accuracy by 7.6 points, but macro-F1 only by 0.007, so it did not really help the rare causes."]},
  {w:"muhammad",t:55,title:"BiLSTM with attention",say:["Why we chose it: reports are long, about a thousand characters, and attention lets the model give more weight to the few words that point to the cause, such as corrosion or backhoe. It finished second.", "Settings and why: exactly the same settings as the BiGRU, so any difference comes from attention and not from tuning.", "The brighter run is Experiment 1, and the fainter one is Experiment 2. Synthetic data lowered its macro-F1 by 0.067. Point at 0.729: the best corrosion score of any run."]},
  {w:"sakina",t:55,title:"Frozen BERT",say:["Why we chose it: BERT has already read a huge amount of English, so we only train a small layer on top. It finished first.", "Point at the pulsing 6,152: that is all that is trained, against 903,688 in the BiLSTM. With only 3,044 reports, training a small layer is safer than retraining 110 million weights, and it is fast.", "Why the learning rate is higher: only the small layer is learning, so 0.002 is fine. Training stopped early on validation macro-F1, like the other models."]},

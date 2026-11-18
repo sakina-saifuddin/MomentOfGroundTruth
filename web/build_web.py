@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT / "app"))
 from causes import CAUSES, LABELS  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from copy_edits import EDITS, ORDER, PLAN, summary_slide  # noqa: E402
+from copy_edits import EDITS, ORDER, PLAN, exp_slides, summary_slide  # noqa: E402
 
 SITE = "https://momentofgroundtruth.netlify.app"
 PLAY_URL = SITE + "/play/"
@@ -180,6 +180,7 @@ def main() -> None:
     found = list(sec_re.finditer(html))
     blocks = {m.group(1): m.group(0) for m in found}
     blocks["s16"] = summary_slide()
+    blocks.update(exp_slides())
     assert set(ORDER) <= set(blocks), f"ORDER lists slides that do not exist: {set(ORDER) - set(blocks)}"
     html = html[: found[0].start()] + (chr(10) * 2).join(blocks[i] for i in ORDER) + html[found[-1].end() :]
 

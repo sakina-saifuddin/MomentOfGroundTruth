@@ -67,3 +67,29 @@ p:empty{display:none}
 .s-res .gr-row.truth{animation:rowGlow 1.4s ease-in-out infinite}
 .s-res .mk i.m{animation:blink 1.1s steps(2,end) infinite}
 .s-vote #gv-voters{display:inline-block;animation:hlPulse 1.8s ease-in-out infinite}
+
+/* the two experiment slides */
+.s-exp .xgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:2.4rem;align-items:start;margin-top:1.2rem}
+.s-exp .xcard h3{font-family:var(--f-display);font-weight:400;font-size:1.5rem;letter-spacing:.02em;text-transform:uppercase;border-bottom:3px solid var(--text);padding-bottom:.6rem}
+.s-exp .xbars{display:grid;gap:.5rem;margin-top:.9rem;position:relative}
+.xr{display:grid;grid-template-columns:6.4rem minmax(0,1fr) 3.2rem;gap:.7rem;align-items:center}
+.xr .n{font-size:.88rem;font-weight:600}
+.xr .t{display:block;height:1.3rem;background:rgba(239,232,218,.08);position:relative}
+.xr .f{display:block;height:100%;width:var(--w);background:rgba(239,232,218,.55)}
+.xr .f.syn{position:absolute;top:0;background:repeating-linear-gradient(135deg,var(--stamp) 0 5px,rgba(0,0,0,.35) 5px 8px)}
+.xr .v{font-family:var(--f-display);font-weight:400;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.xr.hot .f{background:var(--stamp)}
+.xr.hot .v{color:var(--stamp)}
+.s-exp.on .xr .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both}
+.s-exp.on .xr.hot .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both,glow 1.6s 1.3s ease-in-out infinite}
+.s-exp .xbars.stack .tgt{position:absolute;top:0;bottom:0;left:calc(7.1rem + (100% - 12.4rem) * var(--target) / 100);border-left:2px dashed var(--text);pointer-events:none}
+.s-exp .tgt em{position:absolute;top:-1.2rem;left:.3rem;font:normal .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.s-exp .cap{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:1rem}
+.s-exp .key{display:inline-block;width:.9rem;height:.9rem;background:rgba(239,232,218,.55);vertical-align:-.1rem}
+.s-exp .key.syn{background:repeating-linear-gradient(135deg,var(--stamp) 0 4px,rgba(0,0,0,.35) 4px 6px)}
+.s-exp .xside{display:grid;gap:1rem}
+.s-exp .xfact{border-top:3px solid var(--text);padding-top:.6rem;display:grid;gap:.2rem}
+.s-exp .xfact .big{font-family:var(--f-display);font-weight:400;font-size:2.6rem;line-height:1}
+.s-exp .xfact .api{font-family:var(--f-display);font-weight:400;font-size:1.5rem;letter-spacing:.02em;text-transform:uppercase}
+.s-exp .xfact code{font-family:var(--f-mono);font-size:1rem;color:var(--stamp)}
+.s-exp .xfact span{font-size:.92rem;color:var(--mute)}

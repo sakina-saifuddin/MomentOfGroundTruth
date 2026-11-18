@@ -137,7 +137,7 @@ EDITS: list[tuple[str, str]] = [
 
 # slide order, as the story is told (ids are the section ids in the deck). The demo slide (s14) is not in the
 # website; the backup slides come after the summary.
-ORDER = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "sv", "sr", "s16", "s11", "s12"]
+ORDER = ["s1", "s2", "s3", "s4", "s5", "e1", "e2", "s6", "s7", "s8", "s9", "s10", "sv", "sr", "s16", "s11", "s12"]
 
 # the speaker plan, in the same order: (who, seconds, title, notes). The main talk is about 10 minutes, which
 # leaves five for the audience game and questions inside the 15-minute slot. Backup slides have no time.
@@ -160,6 +160,15 @@ PLAN = [
      ["We split the reports once, 70 / 15 / 15, and all three models use the same split. Point at the test block: the model never sees those reports until the end.",
       "The validation reports are for tuning and for stopping training early, and the test reports are used only once.",
       "To handle the imbalance we ran two experiments. Press the Exp 2 button and point at the blinking hatched bars: 681 synthetic reports that an AI assistant wrote from training reports only."]),
+    ("parva", 45, "Experiment 1: class weights",
+     ["Why we need it: some causes have far fewer reports, so a model can ignore them and still look good.",
+      "Experiment 1 keeps the 2,130 real training reports and changes the loss. Each cause gets a weight: the total number of reports divided by 8 times the number of reports in that cause.",
+      "Point at the pulsing 4.8: a mistake on incorrect operation costs about 4.8 times more than a mistake on equipment failure, so the model has to pay attention to the rare causes. In code this is the weight argument of CrossEntropyLoss."]),
+    ("parva", 55, "Experiment 2: smart oversampling",
+     ["Experiment 2 fixes the imbalance with data instead. We use no class weights here.",
+      "We wrote 681 synthetic reports with language-model APIs: the Gemini API and the Groq API, which ran gpt-oss and Qwen models. Each prompt showed the model 3 real training reports of one cause and asked for a new one in the same style.",
+      "A report was thrown away unless it was lowercase, at least 50 words, not a copy, and did not name the cause. The goal was at least 300 training reports per cause, which is the dashed line.",
+      "Only training reports were used to write them. Validation and test stay untouched, so both experiments are tested on the same real reports."]),
     ("parva", 55, "BiGRU",
      ["Why we chose it: it reads a report word by word in both directions, and it is simple and fast, so it is our baseline. It finished third.",
       "Settings and why: the FastText vectors are frozen because they already know English, including technical words. Dropout of 0.3 and early stopping on validation macro-F1 stop it from memorizing the training reports. Adam with a learning rate of 0.001 is the usual starting point for recurrent models.",
@@ -243,3 +252,54 @@ def summary_slide() -> str:
   </div>
   <p class="endnote">One run per model on 458 test reports. Data: U.S. DOT PHMSA. Photos: Wikimedia Commons and NTSB; credits in the repository.</p>
 </section>"""
+
+
+def exp_slides() -> dict[str, str]:
+    """The two experiment slides: class weights (Experiment 1) and smart oversampling (Experiment 2)."""
+    names = ["Equipment", "Corrosion", "Material", "Excavation", "Natural force", "Other outside", "Other cause", "Incorrect op."]
+    weights = json.loads((ROOT / "data" / "experiment1" / "class_weights.json").read_text(encoding="utf-8"))["ordered_by_label"]
+    real = [551, 460, 260, 253, 211, 147, 133, 115]  # real training reports per cause (sum 2,130)
+    syn = [0, 0, 40, 47, 89, 153, 167, 185]  # synthetic reports added in Experiment 2 (sum 681)
+    wmax = max(weights)
+    w_rows = "".join(
+        f'<div class="xr{" hot" if i in (0, 7) else ""}"><span class="n">{n}</span>'
+        f'<span class="t"><i class="f" style="--w:{w / wmax * 100:.0f}%"></i></span><b class="v">{w:.2f}</b></div>'
+        for i, (n, w) in enumerate(zip(names, weights))
+    )
+    ratio = weights[7] / weights[0]
+    top = max(r + a for r, a in zip(real, syn))
+    target = 300 / top * 100
+    s_rows = "".join(
+        f'<div class="xr"><span class="n">{n}</span><span class="t"><i class="f" style="--w:{r / top * 100:.1f}%"></i>'
+        f'<i class="f syn" style="--w:{a / top * 100:.1f}%;left:{r / top * 100:.1f}%"></i></span>'
+        f'<b class="v">{"+" + str(a) if a else str(r)}</b></div>'
+        for n, r, a in zip(names, real, syn)
+    )
+    e1 = f"""<section class="slide s-exp" id="e1">
+  <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 1</p>
+  <h2>Experiment 1: a mistake on a rare cause <em>costs more</em></h2>
+  <div class="body xgrid">
+    <div class="xcard"><h3>Weight given to each cause</h3><div class="xbars">{w_rows}</div>
+      <span class="cap">Weight = 2,130 ÷ (8 × the reports of that cause)</span></div>
+    <div class="xside">
+      <div class="xfact"><b class="big">2,130</b><span>real training reports, nothing added</span></div>
+      <div class="xfact"><b class="big pulse">{ratio:.1f}×</b><span>cost of a mistake on incorrect operation vs equipment failure</span></div>
+      <div class="xfact"><code>CrossEntropyLoss(weight=…)</code><span>the only thing that changes in training</span></div>
+    </div>
+  </div>
+</section>"""
+    e2 = f"""<section class="slide s-exp" id="e2">
+  <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 2</p>
+  <h2>Experiment 2: we <em>add reports</em> for the rare causes</h2>
+  <div class="body xgrid">
+    <div class="xcard"><h3>Training reports per cause</h3><div class="xbars stack" style="--target:{target:.1f}">{s_rows}<i class="tgt"><em>300 goal</em></i></div>
+      <span class="cap"><i class="key"></i>real &nbsp; <i class="key syn"></i>synthetic, written by a language model</span></div>
+    <div class="xside">
+      <div class="xfact"><b class="big pulse">+681</b><span>synthetic reports: 2,130 real become 2,811 in training</span></div>
+      <div class="xfact"><b class="api">Gemini API · Groq API</b><span>gemini-3.5-flash, gpt-oss-120b, gpt-oss-20b and Qwen wrote them, 3 real examples per prompt</span></div>
+      <div class="xfact"><b class="api">4 checks</b><span>lowercase, 50+ words, no copy, cause name not mentioned</span></div>
+      <div class="xfact"><b class="api">No class weights</b><span>plain loss; validation and test stay real</span></div>
+    </div>
+  </div>
+</section>"""
+    return {"e1": e1, "e2": e2}
