@@ -1,0 +1,65 @@
+/* light theme: a white background, black text, the logo red for headings and highlights,
+   and one colour per model: yellow for the BiGRU (Parva), blue for the BiLSTM (Muhammad), green for frozen BERT (Sakina). */
+:root{
+  --soil:#ffffff;--soil-2:#f6f1e8;
+  --text:#17120f;--mute:#4d433a;--line:rgba(23,18,15,.24);
+  --stamp:#d8291f;
+  --gru:#f2b705;--lstm:#1f6fd6;--bert:#1f9d55;--pool:#7a6f64;
+  --paper:#f3ecdf;--ink:#17120f;
+  color-scheme:light;
+}
+body{background:#fff}
+#bg{display:none}
+/* a faint red glow drifts across the white, and a dashed red line runs along the bottom like oil in a pipeline */
+#shade{overflow:hidden;background:#fff}
+#shade::before{content:"";position:absolute;inset:-30%;background:
+  radial-gradient(34% 34% at 28% 30%,rgba(216,41,31,.07),transparent 70%),
+  radial-gradient(30% 30% at 76% 70%,rgba(242,183,5,.08),transparent 70%);animation:redDrift 18s ease-in-out infinite alternate}
+#shade::after{content:"";position:absolute;left:0;right:0;bottom:3.6rem;height:.5rem;
+  background:repeating-linear-gradient(90deg,rgba(216,41,31,.3) 0 2.2rem,transparent 2.2rem 4.4rem);
+  animation:redFlow 3.2s linear infinite}
+@keyframes redDrift{from{transform:translate(-4%,-3%) scale(1)}to{transform:translate(5%,4%) scale(1.12)}}
+@keyframes redFlow{to{background-position:4.4rem 0}}
+@media (prefers-reduced-motion:reduce){#shade::before,#shade::after{animation:none}}
+
+/* headings are black, the key words in them are the logo red */
+h2{color:var(--text)}
+h2 em{color:var(--stamp)}
+.s-title h1{text-shadow:none}
+.eyebrow b{color:var(--stamp)}
+
+/* highlights glow red instead of gold */
+@keyframes hlPulse{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.1);filter:drop-shadow(0 0 .7rem rgba(216,41,31,.75))}}
+@keyframes rowGlow{0%,100%{background:rgba(23,18,15,.04)}50%{background:rgba(216,41,31,.2)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 .3rem rgba(216,41,31,.25))}50%{filter:drop-shadow(0 0 1.2rem rgba(216,41,31,.85))}}
+
+/* bar tracks, hover states and chips: dark tints on white instead of light tints on dark */
+.brow:hover,.brow.hot,.hm .rl.sel,.gr-row.truth{background:rgba(23,18,15,.05)}
+.brow .track,.hbar .track,.pc .track,.tri .m,.rare .meter,.mb .t,.xr .t,.gv-rrow .tr,.gr-row .tr,.lv-brow .tr{background:rgba(23,18,15,.09)}
+.ringnav button:hover,.nav:hover,.cmd{background:rgba(23,18,15,.08)}
+.nav{background:rgba(255,255,255,.9);color:var(--text)}
+.xr .f,.s-exp .key{background:rgba(23,18,15,.62)}
+.xr.hot .f{background:var(--stamp)}
+.xr.hot .v{color:var(--stamp)}
+.xr .f.syn,.s-exp .key.syn{background:repeating-linear-gradient(135deg,var(--stamp) 0 5px,#fff 5px 8px)}
+.blk,.drop{background:rgba(23,18,15,.04)}
+@keyframes pulse{0%,12%,100%{background:rgba(23,18,15,.04)}5%{background:rgba(216,41,31,.18)}}
+.plate{border-color:rgba(23,18,15,.35);background:rgba(23,18,15,.08);color:var(--text)}
+.plate.tok{background:var(--paper);color:var(--ink)}
+#hud{background:linear-gradient(0deg,rgba(255,255,255,.95),rgba(255,255,255,0))}
+#notes{background:rgba(255,255,255,.98);color:var(--text)}
+#sheet{background:#fff}
+
+/* white text sits on the red and the model colours; the yellow one takes black text */
+.rank.best{color:#fff}
+.rank{background:transparent}
+.rk.first{background:var(--stamp)!important;color:#fff!important}
+.seg button[aria-pressed="true"],.sb-train,.lg.t,.mk i.t,.tag.t{color:#fff}
+.plate.head,.lg.m,.mk i.m,.lv-btn,.go,.tag.m,.sb-test,.bar .rk{color:#fff}
+.tile[style*="--gru"] .big,.tile[style*="--gru"] .lab{color:#8a6500}
+
+/* the red winner glow and the pulses keep the same moves, now in red on white */
+.best::before{background:conic-gradient(from var(--ang),#d8291f,#17120f,#f2b705,#d8291f)}
+.paper,.cc,.photo .frame{box-shadow:0 .8rem 1.8rem rgba(23,18,15,.22)}
+.s-title .stampwrap .stamp{filter:drop-shadow(0 .8rem 1.2rem rgba(23,18,15,.3))}
+.s-title .stampwrap::before,.s-title .stampwrap::after{border-color:rgba(216,41,31,.55)}

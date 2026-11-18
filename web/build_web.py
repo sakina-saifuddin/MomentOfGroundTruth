@@ -139,7 +139,7 @@ def main() -> None:
 
     marker = "@media (prefers-reduced-motion:reduce)"
     assert marker in html
-    html = html.replace(marker, read("live_slide.css") + read("stamp_anim.css") + read("game.css") + read("deck_fixes.css") + read("story.css") + marker, 1)
+    html = html.replace(marker, read("live_slide.css") + read("stamp_anim.css") + read("game.css") + read("deck_fixes.css") + read("story.css") + read("theme_light.css") + marker, 1)
 
     start = html.index("/* ---------- slide 14 app ---------- */")
     end = html.index("/* ---------- enter hooks ---------- */")

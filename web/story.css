@@ -82,7 +82,7 @@ p:empty{display:none}
 .xr.hot .v{color:var(--stamp)}
 .s-exp.on .xr .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both}
 .s-exp.on .xr.hot .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both,glow 1.6s 1.3s ease-in-out infinite}
-.s-exp .xbars.stack .tgt{position:absolute;top:0;bottom:0;left:calc(7.1rem + (100% - 12.4rem) * var(--target) / 100);border-left:2px dashed var(--text);pointer-events:none}
+.s-exp .xbars.xstack .tgt{position:absolute;top:0;bottom:0;left:calc(7.1rem + (100% - 12.4rem) * var(--target) / 100);border-left:2px dashed var(--text);pointer-events:none}
 .s-exp .tgt em{position:absolute;top:-1.2rem;left:.3rem;font:normal .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .s-exp .cap{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:1rem}
 .s-exp .key{display:inline-block;width:.9rem;height:.9rem;background:rgba(239,232,218,.55);vertical-align:-.1rem}

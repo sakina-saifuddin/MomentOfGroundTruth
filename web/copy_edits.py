@@ -292,7 +292,7 @@ def exp_slides() -> dict[str, str]:
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 2</p>
   <h2>Experiment 2: we <em>add reports</em> for the rare causes</h2>
   <div class="body xgrid">
-    <div class="xcard"><h3>Training reports per cause</h3><div class="xbars stack" style="--target:{target:.1f}">{s_rows}<i class="tgt"><em>300 goal</em></i></div>
+    <div class="xcard"><h3>Training reports per cause</h3><div class="xbars xstack" style="--target:{target:.1f}">{s_rows}<i class="tgt"><em>300 goal</em></i></div>
       <span class="cap"><i class="key"></i>real &nbsp; <i class="key syn"></i>synthetic, written by a language model</span></div>
     <div class="xside">
       <div class="xfact"><b class="big pulse">+681</b><span>synthetic reports: 2,130 real become 2,811 in training</span></div>

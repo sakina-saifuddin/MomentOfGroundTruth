@@ -554,7 +554,7 @@ p:empty{display:none}
 .xr.hot .v{color:var(--stamp)}
 .s-exp.on .xr .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both}
 .s-exp.on .xr.hot .f{animation:grow 1s .2s cubic-bezier(.2,.7,.2,1) both,glow 1.6s 1.3s ease-in-out infinite}
-.s-exp .xbars.stack .tgt{position:absolute;top:0;bottom:0;left:calc(7.1rem + (100% - 12.4rem) * var(--target) / 100);border-left:2px dashed var(--text);pointer-events:none}
+.s-exp .xbars.xstack .tgt{position:absolute;top:0;bottom:0;left:calc(7.1rem + (100% - 12.4rem) * var(--target) / 100);border-left:2px dashed var(--text);pointer-events:none}
 .s-exp .tgt em{position:absolute;top:-1.2rem;left:.3rem;font:normal .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .s-exp .cap{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:1rem}
 .s-exp .key{display:inline-block;width:.9rem;height:.9rem;background:rgba(239,232,218,.55);vertical-align:-.1rem}
@@ -565,6 +565,71 @@ p:empty{display:none}
 .s-exp .xfact .api{font-family:var(--f-display);font-weight:400;font-size:1.5rem;letter-spacing:.02em;text-transform:uppercase}
 .s-exp .xfact code{font-family:var(--f-mono);font-size:1rem;color:var(--stamp)}
 .s-exp .xfact span{font-size:.92rem;color:var(--mute)}
+/* light theme: a white background, black text, the logo red for headings and highlights,
+   and one colour per model: yellow for the BiGRU (Parva), blue for the BiLSTM (Muhammad), green for frozen BERT (Sakina). */
+:root{
+  --soil:#ffffff;--soil-2:#f6f1e8;
+  --text:#17120f;--mute:#4d433a;--line:rgba(23,18,15,.24);
+  --stamp:#d8291f;
+  --gru:#f2b705;--lstm:#1f6fd6;--bert:#1f9d55;--pool:#7a6f64;
+  --paper:#f3ecdf;--ink:#17120f;
+  color-scheme:light;
+}
+body{background:#fff}
+#bg{display:none}
+/* a faint red glow drifts across the white, and a dashed red line runs along the bottom like oil in a pipeline */
+#shade{overflow:hidden;background:#fff}
+#shade::before{content:"";position:absolute;inset:-30%;background:
+  radial-gradient(34% 34% at 28% 30%,rgba(216,41,31,.07),transparent 70%),
+  radial-gradient(30% 30% at 76% 70%,rgba(242,183,5,.08),transparent 70%);animation:redDrift 18s ease-in-out infinite alternate}
+#shade::after{content:"";position:absolute;left:0;right:0;bottom:3.6rem;height:.5rem;
+  background:repeating-linear-gradient(90deg,rgba(216,41,31,.3) 0 2.2rem,transparent 2.2rem 4.4rem);
+  animation:redFlow 3.2s linear infinite}
+@keyframes redDrift{from{transform:translate(-4%,-3%) scale(1)}to{transform:translate(5%,4%) scale(1.12)}}
+@keyframes redFlow{to{background-position:4.4rem 0}}
+@media (prefers-reduced-motion:reduce){#shade::before,#shade::after{animation:none}}
+
+/* headings are black, the key words in them are the logo red */
+h2{color:var(--text)}
+h2 em{color:var(--stamp)}
+.s-title h1{text-shadow:none}
+.eyebrow b{color:var(--stamp)}
+
+/* highlights glow red instead of gold */
+@keyframes hlPulse{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.1);filter:drop-shadow(0 0 .7rem rgba(216,41,31,.75))}}
+@keyframes rowGlow{0%,100%{background:rgba(23,18,15,.04)}50%{background:rgba(216,41,31,.2)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 .3rem rgba(216,41,31,.25))}50%{filter:drop-shadow(0 0 1.2rem rgba(216,41,31,.85))}}
+
+/* bar tracks, hover states and chips: dark tints on white instead of light tints on dark */
+.brow:hover,.brow.hot,.hm .rl.sel,.gr-row.truth{background:rgba(23,18,15,.05)}
+.brow .track,.hbar .track,.pc .track,.tri .m,.rare .meter,.mb .t,.xr .t,.gv-rrow .tr,.gr-row .tr,.lv-brow .tr{background:rgba(23,18,15,.09)}
+.ringnav button:hover,.nav:hover,.cmd{background:rgba(23,18,15,.08)}
+.nav{background:rgba(255,255,255,.9);color:var(--text)}
+.xr .f,.s-exp .key{background:rgba(23,18,15,.62)}
+.xr.hot .f{background:var(--stamp)}
+.xr.hot .v{color:var(--stamp)}
+.xr .f.syn,.s-exp .key.syn{background:repeating-linear-gradient(135deg,var(--stamp) 0 5px,#fff 5px 8px)}
+.blk,.drop{background:rgba(23,18,15,.04)}
+@keyframes pulse{0%,12%,100%{background:rgba(23,18,15,.04)}5%{background:rgba(216,41,31,.18)}}
+.plate{border-color:rgba(23,18,15,.35);background:rgba(23,18,15,.08);color:var(--text)}
+.plate.tok{background:var(--paper);color:var(--ink)}
+#hud{background:linear-gradient(0deg,rgba(255,255,255,.95),rgba(255,255,255,0))}
+#notes{background:rgba(255,255,255,.98);color:var(--text)}
+#sheet{background:#fff}
+
+/* white text sits on the red and the model colours; the yellow one takes black text */
+.rank.best{color:#fff}
+.rank{background:transparent}
+.rk.first{background:var(--stamp)!important;color:#fff!important}
+.seg button[aria-pressed="true"],.sb-train,.lg.t,.mk i.t,.tag.t{color:#fff}
+.plate.head,.lg.m,.mk i.m,.lv-btn,.go,.tag.m,.sb-test,.bar .rk{color:#fff}
+.tile[style*="--gru"] .big,.tile[style*="--gru"] .lab{color:#8a6500}
+
+/* the red winner glow and the pulses keep the same moves, now in red on white */
+.best::before{background:conic-gradient(from var(--ang),#d8291f,#17120f,#f2b705,#d8291f)}
+.paper,.cc,.photo .frame{box-shadow:0 .8rem 1.8rem rgba(23,18,15,.22)}
+.s-title .stampwrap .stamp{filter:drop-shadow(0 .8rem 1.2rem rgba(23,18,15,.3))}
+.s-title .stampwrap::before,.s-title .stampwrap::after{border-color:rgba(216,41,31,.55)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:900px){
   .slide{padding:1.6rem 1.2rem 4rem;overflow:auto}
@@ -687,7 +752,7 @@ p:empty{display:none}
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 2</p>
   <h2>Experiment 2: we <em>add reports</em> for the rare causes</h2>
   <div class="body xgrid">
-    <div class="xcard"><h3>Training reports per cause</h3><div class="xbars stack" style="--target:54.4"><div class="xr"><span class="n">Equipment</span><span class="t"><i class="f" style="--w:100.0%"></i><i class="f syn" style="--w:0.0%;left:100.0%"></i></span><b class="v">551</b></div><div class="xr"><span class="n">Corrosion</span><span class="t"><i class="f" style="--w:83.5%"></i><i class="f syn" style="--w:0.0%;left:83.5%"></i></span><b class="v">460</b></div><div class="xr"><span class="n">Material</span><span class="t"><i class="f" style="--w:47.2%"></i><i class="f syn" style="--w:7.3%;left:47.2%"></i></span><b class="v">+40</b></div><div class="xr"><span class="n">Excavation</span><span class="t"><i class="f" style="--w:45.9%"></i><i class="f syn" style="--w:8.5%;left:45.9%"></i></span><b class="v">+47</b></div><div class="xr"><span class="n">Natural force</span><span class="t"><i class="f" style="--w:38.3%"></i><i class="f syn" style="--w:16.2%;left:38.3%"></i></span><b class="v">+89</b></div><div class="xr"><span class="n">Other outside</span><span class="t"><i class="f" style="--w:26.7%"></i><i class="f syn" style="--w:27.8%;left:26.7%"></i></span><b class="v">+153</b></div><div class="xr"><span class="n">Other cause</span><span class="t"><i class="f" style="--w:24.1%"></i><i class="f syn" style="--w:30.3%;left:24.1%"></i></span><b class="v">+167</b></div><div class="xr"><span class="n">Incorrect op.</span><span class="t"><i class="f" style="--w:20.9%"></i><i class="f syn" style="--w:33.6%;left:20.9%"></i></span><b class="v">+185</b></div><i class="tgt"><em>300 goal</em></i></div>
+    <div class="xcard"><h3>Training reports per cause</h3><div class="xbars xstack" style="--target:54.4"><div class="xr"><span class="n">Equipment</span><span class="t"><i class="f" style="--w:100.0%"></i><i class="f syn" style="--w:0.0%;left:100.0%"></i></span><b class="v">551</b></div><div class="xr"><span class="n">Corrosion</span><span class="t"><i class="f" style="--w:83.5%"></i><i class="f syn" style="--w:0.0%;left:83.5%"></i></span><b class="v">460</b></div><div class="xr"><span class="n">Material</span><span class="t"><i class="f" style="--w:47.2%"></i><i class="f syn" style="--w:7.3%;left:47.2%"></i></span><b class="v">+40</b></div><div class="xr"><span class="n">Excavation</span><span class="t"><i class="f" style="--w:45.9%"></i><i class="f syn" style="--w:8.5%;left:45.9%"></i></span><b class="v">+47</b></div><div class="xr"><span class="n">Natural force</span><span class="t"><i class="f" style="--w:38.3%"></i><i class="f syn" style="--w:16.2%;left:38.3%"></i></span><b class="v">+89</b></div><div class="xr"><span class="n">Other outside</span><span class="t"><i class="f" style="--w:26.7%"></i><i class="f syn" style="--w:27.8%;left:26.7%"></i></span><b class="v">+153</b></div><div class="xr"><span class="n">Other cause</span><span class="t"><i class="f" style="--w:24.1%"></i><i class="f syn" style="--w:30.3%;left:24.1%"></i></span><b class="v">+167</b></div><div class="xr"><span class="n">Incorrect op.</span><span class="t"><i class="f" style="--w:20.9%"></i><i class="f syn" style="--w:33.6%;left:20.9%"></i></span><b class="v">+185</b></div><i class="tgt"><em>300 goal</em></i></div>
       <span class="cap"><i class="key"></i>real &nbsp; <i class="key syn"></i>synthetic, written by a language model</span></div>
     <div class="xside">
       <div class="xfact"><b class="big pulse">+681</b><span>synthetic reports: 2,130 real become 2,811 in training</span></div>
@@ -1338,6 +1403,56 @@ function spotlight(id){
     tiles.forEach((t,i)=>{if(i===bi)$('.big',t).classList.add('pulse','auto');else t.classList.add('dim','auto')});
   }
   if(id==='s9')mark('#pf,#pa,#pdelta b','pulse');
+  enterFx(id);
+}
+
+/* ---------- entry effects: every slide brings its main number in with a different move, so the slides feel different ----------
+   They use the Web Animations API on the separate translate/rotate/scale properties, so they never fight the pulse. */
+const FX={
+  zoom:  [{scale:'3.2',opacity:0},{scale:'1',opacity:1}],
+  slam:  [{scale:'4',opacity:0,translate:'0 -2rem'},{scale:'.9',opacity:1,translate:'0 .2rem',offset:.55},{scale:'1.05',translate:'0 0',offset:.75},{scale:'1',opacity:1,translate:'0 0'}],
+  flipX: [{rotate:'x 90deg',opacity:0},{rotate:'x 0deg',opacity:1}],
+  flipY: [{rotate:'y -90deg',opacity:0},{rotate:'y 0deg',opacity:1}],
+  spin:  [{rotate:'360deg',scale:'.2',opacity:0},{rotate:'0deg',scale:'1',opacity:1}],
+  drop:  [{translate:'0 -4rem',opacity:0},{translate:'0 .6rem',opacity:1,offset:.6},{translate:'0 0',opacity:1}],
+  rise:  [{translate:'0 3rem',opacity:0},{translate:'0 0',opacity:1}],
+  left:  [{translate:'-7rem 0',opacity:0},{translate:'0 0',opacity:1}],
+  right: [{translate:'7rem 0',opacity:0},{translate:'0 0',opacity:1}],
+  wipe:  [{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'}],
+  track: [{letterSpacing:'.6em',opacity:0},{letterSpacing:'0em',opacity:1}],
+  jelly: [{scale:'0',opacity:0},{scale:'1.25 .8',opacity:1,offset:.5},{scale:'.9 1.1',offset:.7},{scale:'1',opacity:1}]
+};
+/* slide id -> [effect of the main number, count it up?, other elements, their effect] */
+const ENTER={
+  s2: ['zoom',  true,  '.case',            'left'],
+  s3: ['jelly', true,  '#classbars .brow', 'wipe'],
+  s4: ['jelly', false, '.cc',              'rise'],
+  s5: ['flipY', false, '.sb-train,.sb-val,.sb-test', 'drop'],
+  e1: ['slam',  false, '.xr',              'left'],
+  e2: ['spin',  true,  '.xr',              'wipe'],
+  s6: ['flipX', false, '.tile',            'rise'],
+  s7: ['right', false, '.tile',            'left'],
+  s8: ['drop',  false, '.tile',            'jelly'],
+  s9: ['track', false, '.pc',              'rise'],
+  s10:['slam',  false, '.hrow,.hbar',      'left'],
+  s16:['zoom',  true,  '.wcard',           'jelly']
+};
+function countUp(el,ms){
+  const raw=el.textContent.trim(),m=raw.match(/^([+]?)([\d,]*\.?\d+)(.*)$/);if(!m)return;
+  const dec=(m[2].split('.')[1]||'').length,comma=m[2].includes(','),to=parseFloat(m[2].replace(/,/g,'')),t0=performance.now();
+  (function step(t){
+    const k=Math.min((t-t0)/ms,1),v=to*(1-Math.pow(1-k,3));
+    let s=v.toFixed(dec);if(comma)s=Number(s).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+    el.textContent=m[1]+s+m[3];
+    if(k<1)requestAnimationFrame(step);else el.textContent=raw;
+  })(t0);
+}
+function enterFx(id){
+  const s=slides.find(x=>x.id===id),c=ENTER[id];
+  if(!s||!c||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const mains=$$('.big,.rank',s);if(!mains.length){const e=$('h2 em',s);if(e)mains.push(e)}
+  mains.forEach((e,i)=>{e.animate(FX[c[0]],{duration:900,delay:i*120,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});if(c[1])countUp(e,1100)});
+  $$(c[2],s).forEach((e,i)=>e.animate(FX[c[3]],{duration:700,delay:200+i*90,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
 }
 
 /* ---------- enter hooks ---------- */

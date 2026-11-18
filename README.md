@@ -325,7 +325,7 @@ python web/build_web.py
 |---|---|
 | `web/build_web.py` | Builds the three generated files below from `docs/Moment of GroundTruth.html` |
 | `web/copy_edits.py` | Wording changes to the original deck, the slide order, the speaker plan and the closing slide |
-| `web/story.css`, `web/spot.js` | Highlight animations and the spotlight on the numbers |
+| `web/story.css`, `web/theme_light.css`, `web/spot.js` | Highlight animations, the white theme (black text, logo red for headings, yellow BiGRU, blue BiLSTM, green BERT) and the entry animation of each slide's main number |
 | `web/live_slide.*`, `web/game_slides.html`, `web/game.*`, `web/stamp_anim.*`, `web/fit.js`, `web/deck_fixes.css` | The slides, scripts and styles added to the deck |
 | `web/play_template.html` | Template of the phone page |
 | `web/saved_results.json` | Real model and SHAP outputs for the eight example reports |
