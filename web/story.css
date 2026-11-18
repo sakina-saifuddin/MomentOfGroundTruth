@@ -1,32 +1,68 @@
-/* story layer: the "why" boxes, the three-model plan slide, and less clutter on the model slides */
-.story{border-left:3px solid var(--c,var(--stamp));padding:.15rem 0 .15rem 1rem;margin-top:1rem;max-width:36rem}
-.story .k{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:.3rem}
-.story p{font-size:1.02rem;line-height:1.5;color:var(--text)}
-.story.wide{max-width:none;grid-column:1/-1;margin-top:0}
+/* highlights: the numbers we talk about pulse, and the best model is set apart */
+@keyframes hlPulse{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.1);filter:drop-shadow(0 0 .8rem rgba(255,80,60,.95))}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 .3rem rgba(255,190,80,.35))}50%{filter:drop-shadow(0 0 1.5rem rgba(255,205,90,1))}}
+@keyframes rowGlow{0%,100%{background:rgba(239,232,218,.07)}50%{background:rgba(216,41,31,.35)}}
+@keyframes grow{from{width:0}to{width:var(--w)}}
+@property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes ring{to{--ang:360deg}}
+.pulse{display:inline-block;animation:hlPulse 1.4s ease-in-out infinite;transform-origin:center}
+.blink{animation:blink 1.1s steps(2,end) infinite}
+.dim{opacity:.35;transition:opacity .5s}
+.hotrow{animation:rowGlow 1.4s ease-in-out infinite}
 
-/* model slides: no diagrams or settings tables, only the why and the result */
-.s-model .arch,.s-model .specs,.s-bert .specs{display:none}
-.s-model .body{align-items:start}
-.s-model .story:first-of-type{margin-top:0}
-.s-flow .models3{display:none}
+/* the winner: a spinning gold and red outline, so it cannot be missed */
+.best{position:relative;isolation:isolate}
+.best::before{content:"";position:absolute;inset:-.55rem;z-index:-1;border-radius:.4rem;padding:3px;
+  background:conic-gradient(from var(--ang),#e3a63a,#d8291f,#f1eadc,#e3a63a);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:ring 2.6s linear infinite}
+
+/* rank badge in the corner of each model slide */
+.rank{position:absolute;right:4.4rem;top:3rem;font-family:var(--f-display);font-size:3rem;line-height:1;padding:.25rem 1rem .15rem;border:3px solid var(--c);color:var(--c);letter-spacing:.03em;z-index:3}
+.rank.best{background:var(--stamp);border-color:var(--stamp);color:#fff;font-size:3.4rem;animation:glow 1.6s ease-in-out infinite}
+
+/* short labels instead of paragraphs */
+.tagline{font-family:var(--f-mono);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.chips span{font-family:var(--f-mono);font-size:.82rem;letter-spacing:.04em;border:1px solid var(--line);padding:.3rem .7rem}
+.chips.res span{font-size:.95rem;border-color:var(--text)}
+.chips b{font-weight:500;color:var(--text)}
+.chips .up{border-color:var(--lstm)!important}.chips .down{border-color:var(--stamp)!important}
+p:empty{display:none}
+
+/* model slides keep their diagrams; the settings table is replaced by chips */
+.s-model .specs,.s-bert .specs{display:none}
+.s-model .tiles .credit{display:none}
+.s-flow .models3,.s-flow .xnote:not(#xnote){display:none}
 .s-data .pill{display:none}
+.s-flow .syn{animation:blink 1.3s steps(2,end) infinite}
 
-/* the plan slide: three models, three cards */
-.s-plan .body{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.8rem;align-items:start;margin-top:2rem}
-.s-plan .mc{border-top:6px solid var(--c);padding-top:.9rem}
-.s-plan .mc .n{font-family:var(--f-display);font-size:3.2rem;line-height:.9;color:var(--c);display:block}
-.s-plan .mc h3{font-family:var(--f-display);font-weight:400;font-size:1.9rem;line-height:1.05;letter-spacing:.02em;text-transform:uppercase;margin:.4rem 0 .2rem}
-.s-plan .mc .who{font-family:var(--f-mono);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
-.s-plan .mc p{font-size:1.12rem;line-height:1.5;margin-top:.8rem}
-.s-plan .mc .adds{display:block;margin-top:.9rem;font-family:var(--f-mono);font-size:.78rem;letter-spacing:.06em;color:var(--text);border:1px solid var(--line);padding:.35rem .6rem}
-.s-plan .story{margin-top:.4rem}
+/* head to head: the winning bar glows and its badge pulses */
+.winbar{animation:glow 1.6s ease-in-out infinite}
+.rk.first{background:#e3a63a!important;color:#120e0b!important;transform:scale(1.5);animation:blink 1.1s steps(2,end) infinite}
+.key3 .row.mute{display:none}
 
-/* the summary: three reasons */
-.s-end .steps{margin-top:1.4rem;max-width:36rem}
-.s-end .steps li{font-size:1.12rem}
-.s-end .note{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.04em;color:var(--mute);margin-top:1.1rem;max-width:36rem;line-height:1.5}
+/* the summary: three small charts, the best bar highlighted */
+.s-end .why3{grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;align-items:start;margin-top:1.4rem}
+.s-end .wcard h3{font-family:var(--f-display);font-weight:400;font-size:1.7rem;letter-spacing:.02em;text-transform:uppercase;line-height:1.05}
+.s-end .wcard .cap{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:.8rem}
+.s-end .mini{display:grid;gap:.7rem;margin-top:1rem;border-top:3px solid var(--text);padding-top:1rem}
+.mb{display:grid;grid-template-columns:5.4rem minmax(0,1fr) 3.6rem;gap:.7rem;align-items:center}
+.mb .n{font-size:.9rem;font-weight:600}
+.mb .t{display:block;height:1.5rem;background:rgba(239,232,218,.08);position:relative}
+.mb .f{display:block;height:100%;width:var(--w);background:var(--c)}
+.mb .v{font-family:var(--f-display);font-weight:400;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.s-end.on .mb .f{animation:grow 1s .3s cubic-bezier(.2,.7,.2,1) both}
+.s-end.on .mb.best .f{animation:grow 1s .3s cubic-bezier(.2,.7,.2,1) both,glow 1.6s 1.4s ease-in-out infinite}
+.s-end.on .mb.best .v{animation:hlPulse 1.4s 1.4s ease-in-out infinite}
+.mb.best .n::after{content:" BEST";color:var(--stamp);font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;animation:blink 1.1s steps(2,end) infinite}
+.s-end .endnote{position:absolute;left:4.2rem;right:4.2rem;bottom:5.2rem;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.04em;color:var(--mute)}
 
 /* the game slides */
 .s-vote .sub,.s-res .sub{max-width:44rem;margin-top:.6rem}
-.gr-why{flex-basis:100%;font-size:.95rem;line-height:1.5;color:var(--mute);max-width:62rem}
-.s-model .tiles .credit{display:none}
+.rc{display:inline-block;font-family:var(--f-mono);font-size:.95rem;border:1px solid var(--text);padding:.3rem .7rem;margin-right:.6rem}
+.rc b{font-weight:500}
+.s-res .gr-row.truth{animation:rowGlow 1.4s ease-in-out infinite}
+.s-res .mk i.m{animation:blink 1.1s steps(2,end) infinite}
+.s-vote #gv-voters{display:inline-block;animation:hlPulse 1.8s ease-in-out infinite}

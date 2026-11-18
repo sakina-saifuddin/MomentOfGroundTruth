@@ -48,14 +48,14 @@
         const pct=tot?Math.round(100*n/tot):0,isT=a&&a.truth===k,isM=a&&a.model===k;
         return `<div class="gr-row${isT?' truth':''}${tot&&k===top?' top':''}"><span class="n">${SHORT[k]}</span><div class="tr"><div class="fl" style="width:${Math.round(100*n/mx)}%"></div></div><span class="p">${pct}%</span><span class="mk">${isT?'<i class="t">✓</i>':''}${isM?'<i class="m">M</i>':''}</span></div>`;
       }).join('');
-      const res=a?`<b>${tot?Math.round(100*c.counts[a.truth]/tot):0}%</b> of the room chose the correct answer. The model ${a.model===a.truth?'chose the same answer':'chose a different answer'}, with <b>${Math.round(a.conf*100)}%</b> confidence.`:'';
+      const res=a?`<span class="rc">Room <b>${tot?Math.round(100*c.counts[a.truth]/tot):0}%</b></span><span class="rc">Model <b>${a.model===a.truth?'✓':'✗'}</b> ${Math.round(a.conf*100)}% sure</span>`:'';
       const card=one?`<div class="gr-rep paper"><div class="lab" style="color:#5a5143">The report · what caused it?</div><p>${esc(rd.text)}</p></div>`:'';
       return card+`<div class="gr-col"><div class="gr-h"><b>${one?'The votes':'Report '+(i+1)}</b><span class="lab">${tot} answers</span></div>${one?'':`<p class="gr-ex">${esc(rd.excerpt)}</p>`}<div><div class="gr-rows">${rows}</div><div class="gr-res" style="margin-top:.5rem">${res}</div></div></div>`;
     }).join('');
     $('#gr-cols').innerHTML=cols;
     const btn=$('#gm-reveal');btn.textContent=rev?'Hide answers':'Reveal answers';
     const score=$('#gr-score'),vd=$('#gr-verdict');
-    if(!rev){score.textContent=st.voters+(st.voters===1?' person has':' people have')+' answered so far.';vd.innerHTML='';shownVerdict='';return}
+    if(!rev){score.textContent=st.voters+' answered';vd.innerHTML='';shownVerdict='';return}
     let model=0,crowd=0,avg=0;
     st.answers.forEach((a,i)=>{
       const c=st.rounds[i];if(a.model===a.truth)model++;
@@ -63,7 +63,7 @@
       avg+=c.total?c.counts[a.truth]/c.total:0;
     });
     const n=st.answers.length;
-    score.textContent=n===1?`${Math.round(100*avg)}% of the room answered correctly, and the model's answer was ${model?'correct':'not correct'}.`:`Crowd vote ${crowd}/${n} · Model ${model}/${n} · average person ${Math.round(100*avg/n)}% right`;
+    score.textContent=n===1?`Room ${Math.round(100*avg)}% correct · Model ${model?'✓':'✗'}`:`Crowd vote ${crowd}/${n} · Model ${model}/${n} · average person ${Math.round(100*avg/n)}% right`;
     const v=crowd>model?'The crowd wins':crowd<model?'The model wins':n===1?(model?'Both got it':'Both fooled'):'Dead heat';
     if(v!==shownVerdict){vd.innerHTML=`<span class="gm-stamp">${v}</span>`;shownVerdict=v}
   }

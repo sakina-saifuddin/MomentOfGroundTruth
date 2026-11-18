@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT / "app"))
 from causes import CAUSES, LABELS  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from copy_edits import EDITS, ORDER, PLAN, PLAN_SLIDE  # noqa: E402
+from copy_edits import EDITS, ORDER, PLAN, summary_slide  # noqa: E402
 
 SITE = "https://momentofgroundtruth.netlify.app"
 PLAY_URL = SITE + "/play/"
@@ -129,14 +129,11 @@ def main() -> None:
     # slides: the app slide becomes the live demo; the two game slides go in front of it
     nr = len(rounds)
     what = "a real incident report" if nr == 1 else f"{nr} real incident reports"
-    model_gets = (
-        "The model reads this same report, and it has never seen it before, because the report comes from the held-out test set."
-        if nr == 1
-        else f"The model reads these same {nr} reports, and it has never seen them before, because they come from the held-out test set."
-    )
+    model_gets = "The model has never seen this report." if nr == 1 else f"The model has never seen these {nr} reports."
     game_slides = read("game_slides.html").replace("/*QR*/", qr_svg(PLAY_URL)).replace("/*PLAYURL*/", PLAY_URL.replace("https://", "")).replace("/*WHAT*/", what).replace("/*MODELGETS*/", model_gets)
-    # order: the demo shows what the model outputs, then the game asks the room to beat it
-    live = read("live_slide.html").strip() + chr(10) + chr(10) + game_slides.strip()
+    # the live demo slide (s14) is only in the website if ORDER lists it
+    with_demo = "s14" in ORDER
+    live = (read("live_slide.html").strip() + chr(10) + chr(10) if with_demo else "") + game_slides.strip()
     html, n = re.subn(r'<section class="slide s-app" id="s14">.*?</section>', lambda m: live, html, count=1, flags=re.S)
     assert n == 1, "slide 14 not found"
 
@@ -158,7 +155,8 @@ def main() -> None:
         + "const GAME_ROUNDS=" + json.dumps(rounds, ensure_ascii=False) + ";"
         + chr(10)
         + read("game.js")
-        + read("live_slide.js")
+        + read("spot.js")
+        + (read("live_slide.js") if with_demo else "")
         + chr(10)
     )
     html = html[:start] + js + html[end:]
@@ -181,14 +179,14 @@ def main() -> None:
     sec_re = re.compile(r'<section class="slide [^"]*" id="([^"]+)"[^>]*>.*?</section>', re.S)
     found = list(sec_re.finditer(html))
     blocks = {m.group(1): m.group(0) for m in found}
-    blocks["splan"] = PLAN_SLIDE
-    assert set(blocks) == set(ORDER), f"slide ids differ from ORDER: {set(blocks) ^ set(ORDER)}"
+    blocks["s16"] = summary_slide()
+    assert set(ORDER) <= set(blocks), f"ORDER lists slides that do not exist: {set(ORDER) - set(blocks)}"
     html = html[: found[0].start()] + (chr(10) * 2).join(blocks[i] for i in ORDER) + html[found[-1].end() :]
 
     html = html.replace("function onEnter(n){", "function onEnter(n){" + chr(10) + "  if(n===0)playStamp();", 1)
     hook = "if(s.id==='s10'&&window._barsReset)window._barsReset();"
     assert hook in html
-    html = html.replace(hook, hook + chr(10) + "  if(s.id==='s14'&&window._lvEnter)window._lvEnter();" + chr(10) + "  if(s.id==='sv'||s.id==='sr')gameEnter();else gameLeave();", 1)
+    html = html.replace(hook, hook + chr(10) + "  spotlight(s.id);" + chr(10) + ("  if(s.id==='s14'&&window._lvEnter)window._lvEnter();" + chr(10) if with_demo else "") + "  if(s.id==='sv'||s.id==='sr')gameEnter();else gameLeave();", 1)
 
     html = html.replace("</head>", favicon() + chr(10) + "</head>", 1)
     (WEB / "index.html").write_text(html, encoding="utf-8")
