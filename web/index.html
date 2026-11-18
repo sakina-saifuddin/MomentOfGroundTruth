@@ -579,9 +579,11 @@ body{background:#fff}
 #bg{display:none}
 /* a faint red glow drifts across the white, and a dashed red line runs along the bottom like oil in a pipeline */
 #shade{overflow:hidden;background:#fff}
+/* the glow also beats slowly, like a pulse in the pipeline: a soft lub-dub every two seconds, far too faint to compete with the text */
 #shade::before{content:"";position:absolute;inset:-30%;background:
-  radial-gradient(34% 34% at 28% 30%,rgba(216,41,31,.07),transparent 70%),
-  radial-gradient(30% 30% at 76% 70%,rgba(242,183,5,.08),transparent 70%);animation:redDrift 18s ease-in-out infinite alternate}
+  radial-gradient(40% 40% at 28% 32%,rgba(216,41,31,.13),transparent 70%),
+  radial-gradient(34% 34% at 76% 70%,rgba(242,183,5,.13),transparent 70%);animation:redDrift 18s ease-in-out infinite alternate,beat 2s ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:.55}10%{opacity:1}22%{opacity:.65}34%{opacity:.92}55%{opacity:.55}}
 #shade::after{content:"";position:absolute;left:0;right:0;bottom:3.6rem;height:.5rem;
   background:repeating-linear-gradient(90deg,rgba(216,41,31,.3) 0 2.2rem,transparent 2.2rem 4.4rem);
   animation:redFlow 3.2s linear infinite}
@@ -630,6 +632,35 @@ h2 em{color:var(--stamp)}
 .paper,.cc,.photo .frame{box-shadow:0 .8rem 1.8rem rgba(23,18,15,.22)}
 .s-title .stampwrap .stamp{filter:drop-shadow(0 .8rem 1.2rem rgba(23,18,15,.3))}
 .s-title .stampwrap::before,.s-title .stampwrap::after{border-color:rgba(216,41,31,.55)}
+
+/* ---------- colour instead of black: neutral bars are a soft red, the important ones are the strong colours ---------- */
+.brow .fill,.hbar .real,.sw2.solid,.xr .f,.s-exp .key{background:#eba9a1}
+.brow:nth-child(1) .fill{background:var(--stamp)}
+.brow:last-child .fill{background:var(--gru)}
+.xr.hot .f{background:var(--stamp)}
+.sb-train{background:#f08a24;color:#fff}
+.sb-val{background:#f6c6bf;color:var(--text)}
+.sb-test{background:var(--stamp);color:#fff}
+.seg button[aria-pressed="true"]{background:var(--stamp);color:#fff}
+.lg.t,.mk i.t{background:var(--gru);color:var(--text)}
+.tag.t{background:var(--gru);color:var(--text);border-color:var(--gru)}
+.pc .ghost,.rare .meter u{background:var(--stamp)}
+.hm .c.hi::after{border-color:var(--stamp)}
+.cm .k{color:var(--text)}
+.cm .k.dg{box-shadow:inset 0 0 0 2px rgba(23,18,15,.75)}
+.cm .k.faint{color:rgba(23,18,15,.4)}
+.hm .c{color:var(--text)}
+
+/* ---------- a highlighter marker behind every number ---------- */
+.hl{background-image:linear-gradient(transparent 38%,var(--hlc,rgba(242,183,5,.5)) 38%,var(--hlc,rgba(242,183,5,.5)) 88%,transparent 88%);
+  background-repeat:no-repeat;background-size:100% 100%;border-radius:.15em;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.v.hl{width:max-content;justify-self:end;margin-left:auto}
+.big.hl{display:inline-block}
+
+/* ---------- the plain-language line at the bottom of each slide ---------- */
+.how{margin-top:.6rem;flex:none;font-size:.95rem;line-height:1.4;color:var(--text);max-width:62rem;padding:.55rem .9rem;
+  background:linear-gradient(90deg,rgba(242,183,5,.22),rgba(242,183,5,.04));border-left:4px solid var(--stamp)}
+.how b{display:block;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);margin-bottom:.15rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:900px){
   .slide{padding:1.6rem 1.2rem 4rem;overflow:auto}
@@ -681,7 +712,7 @@ h2 em{color:var(--stamp)}
     <div class="photo"><div class="frame"><img data-img="corr" alt="Corrosion pit in the wall of a buried steel gas pipeline, before and after blasting">
       <p class="credit">Corrosion pit in a buried gas pipeline. Illustration only, not either incident above. Photo: Cafe Nervosa / D. Mawhinney, CC BY-SA 3.0, Wikimedia Commons.</p></div></div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Each number is people hurt or killed in one real accident. This is why the cause of every failure has to be found.</p></section>
 
 <section class="slide s-data" id="s3">
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>The reports</p>
@@ -698,7 +729,7 @@ h2 em{color:var(--stamp)}
     </div>
     <div class="bars" id="classbars"></div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Each bar is one cause. The longer the bar, the more reports have that cause. The red bar is the most common and the yellow bar is the rarest.</p></section>
 
 <section class="slide s-cause" id="s4">
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>Drag the cards to read real examples</p>
@@ -709,7 +740,7 @@ h2 em{color:var(--stamp)}
       <div class="ringnav"><button id="rprev" aria-label="Previous cause">&#8592;</button><span class="pill" id="rcount">1 / 8</span><button id="rnext" aria-label="Next cause">&#8594;</button></div>
     </div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>These are the eight answers the model can give. Every report has exactly one of them.</p></section>
 
 <section class="slide s-flow" id="s5">
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>How we test</p>
@@ -732,7 +763,7 @@ h2 em{color:var(--stamp)}
       <p class="xnote" id="xnote"></p>
     </div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>The long bar is the reports the model learns from. The two short bars are the reports we hold back to tune it and to grade it at the end.</p></section>
 
 <section class="slide s-exp" id="e1">
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 1</p>
@@ -746,7 +777,7 @@ h2 em{color:var(--stamp)}
       <div class="xfact"><code>CrossEntropyLoss(weight=…)</code><span>the only thing that changes in training</span></div>
     </div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>A bigger weight means the model is punished more for getting that cause wrong, so it cannot just ignore the rare ones.</p></section>
 
 <section class="slide s-exp" id="e2">
   <p class="eyebrow"><b>2 · The data and the test</b><i></i>Experiment 2</p>
@@ -761,7 +792,7 @@ h2 em{color:var(--stamp)}
       <div class="xfact"><b class="api">No class weights</b><span>plain loss; validation and test stay real</span></div>
     </div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Solid is real reports and striped is the synthetic reports we added. The dashed line is our goal of 300 reports for each cause.</p></section>
 
 <section class="slide s-model" id="s6" style="--c:var(--gru)">
   <p class="eyebrow"><b>3 · The models</b><i></i>Model 1 of 3</p><span class="rank" style="--c:var(--gru)">#3</span>
@@ -780,7 +811,7 @@ h2 em{color:var(--stamp)}
     </div>
     <div class="tiles" id="tiles-gru"></div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Macro-F1 is the main score, from 0 to 1, and higher is better. It counts all eight causes equally. Accuracy is how many reports the model got right.</p></section>
 
 <section class="slide s-model" id="s7" style="--c:var(--lstm)">
   <p class="eyebrow"><b>3 · The models</b><i></i>Model 2 of 3</p><span class="rank" style="--c:var(--lstm)">#2</span>
@@ -799,7 +830,7 @@ h2 em{color:var(--stamp)}
     </div>
     <div class="tiles" id="tiles-lstm"></div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>The bright numbers are Experiment 1 and the faded ones are Experiment 2. Attention means the model looks harder at the important words.</p></section>
 
 <section class="slide s-bert" id="s8">
   <p class="eyebrow"><b>3 · The models</b><i></i>Model 3 of 3</p><span class="rank best">#1 BEST</span>
@@ -815,7 +846,7 @@ h2 em{color:var(--stamp)}
       <div class="chips"><span>AdamW · lr 0.002</span><span>early stopping</span></div><div class="chips res"><span class="up">Macro-F1 <b class="pulse">0.553</b></span><span class="up">Accuracy <b>60.3%</b></span></div><p class="hint">DRAG TO ROTATE · HOVER A LAYER</p>
     </div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Frozen means we do not change BERT at all. We only train the small layer on top, so there are far fewer numbers to learn.</p></section>
 
 <section class="slide s-pool" id="s9">
   <p class="eyebrow"><b>3 · The models</b><i></i>The choice that mattered most</p>
@@ -832,7 +863,7 @@ h2 em{color:var(--stamp)}
     </div>
     <div><div class="lab" style="margin-bottom:.6rem">Per-cause F1 <span style="color:var(--text)">| marks the other method</span></div><div id="pcbars"></div></div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Pooling is how the model squeezes a whole report into one set of numbers. The same model scored much higher when it averaged every word.</p></section>
 
 <section class="slide s-bars" id="s10">
   <p class="eyebrow"><b>4 · The results</b><i></i>All six runs on the test reports</p>
@@ -847,7 +878,7 @@ h2 em{color:var(--stamp)}
       <p class="hint">DRAG TO ROTATE</p>
     </div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>A taller bar is a better score. Solid bars are Experiment 1 and striped bars are Experiment 2. The number on top of each bar is its score.</p></section>
 
 <section class="slide s-vote" id="sv">
   <p class="eyebrow"><b>5 · Your turn</b><i></i>Audience game<span id="gm-online" class="pill lv-st"><i></i>connecting</span></p>
@@ -897,7 +928,7 @@ h2 em{color:var(--stamp)}
     <div class="wcard"><h3>How we pool matters most</h3><div class="mini"><div class="mb" style="--c:var(--pool);--w:55%"><span class="n">[CLS]</span><span class="t"><i class="f"></i></span><b class="v">0.305</b></div><div class="mb best" style="--c:var(--bert);--w:100%"><span class="n">Mean</span><span class="t"><i class="f"></i></span><b class="v">0.553</b></div></div><span class="cap">BERT macro-F1: [CLS] token vs mean pooling</span></div>
   </div>
   <p class="endnote">One run per model on 458 test reports. Data: U.S. DOT PHMSA. Photos: Wikimedia Commons and NTSB; credits in the repository.</p>
-</section>
+<p class="how"><b>How to read this</b>Green is frozen BERT. In the first chart a shorter bar is better, because it means a smaller drop. In the other two a longer bar is better.</p></section>
 
 <section class="slide s-heat" id="s11">
   <p class="eyebrow"><b>Backup</b><i></i>Click a row to see precision and recall</p>
@@ -909,7 +940,7 @@ h2 em{color:var(--stamp)}
     </div>
     <div class="det" id="det"></div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Each bar is the score for one cause. A longer bar means the model is better at that cause.</p></section>
 
 <section class="slide s-cm" id="s12">
   <p class="eyebrow"><b>Backup</b><i></i>Where the models confuse causes</p>
@@ -928,7 +959,7 @@ h2 em{color:var(--stamp)}
       <p class="cmhover" id="cmhover">Hover a cell for the count behind it.</p>
     </div>
   </div>
-</section>
+<p class="how"><b>How to read this</b>Each row is the true cause and each column is what the model said. A strong colour on the diagonal means it got that cause right.</p></section>
 </main>
 
 <aside id="notes" aria-live="polite"><div><h4 id="nhead"></h4><ul id="nlist"></ul></div><div id="timer">0:00<small>TARGET 10:00 · LIMIT 15:00</small></div></aside>
@@ -1197,7 +1228,7 @@ tiles('#tiles-gru','gru','var(--gru)'); tiles('#tiles-lstm','lstm','var(--lstm)'
   let e='1',row=6; const ids=['gru','lstm','bert'];
   const hm=$('#hm'),det=$('#det');
   const HL={'1':[[3,'lstm'],[6,'gru'],[7,'gru']],'2':[[3,'gru'],[6,'lstm'],[7,'lstm']]};
-  function shade(v,id){const a=Math.min(1,v/0.8);return `color-mix(in srgb, ${id==='gru'?'#e3a63a':id==='lstm'?'#5fa8ad':'#e8493f'} ${Math.round(18+a*72)}%, #1c1611)`}
+  function shade(v,id){const a=Math.min(1,v/0.8);return `color-mix(in srgb, ${id==='gru'?'#f2b705':id==='lstm'?'#1f6fd6':'#1f9d55'} ${Math.round(18+a*72)}%, #ffffff)`}
   function draw(){
     let h=`<div></div>`+ids.map(id=>`<div class="h"><b>${MM[id].short}</b></div>`).join('');
     NAMES.forEach((n,i)=>{
@@ -1218,12 +1249,12 @@ tiles('#tiles-gru','gru','var(--gru)'); tiles('#tiles-lstm','lstm','var(--lstm)'
   let id='bert',e='1';
   const cm=$('#cm'),SH=['Equipment','Corrosion','Material','Excavation','Natural force','Other outside','Other incident','Incorrect op.'];
   function draw(){
-    const run=MM[id].runs[e],M=run.cm,col=MCOL[id]==='var(--bert)'?'#e8493f':id==='gru'?'#e3a63a':'#5fa8ad';
+    const run=MM[id].runs[e],M=run.cm,col=MCOL[id]==='var(--bert)'?'#1f9d55':id==='gru'?'#f2b705':'#1f6fd6';
     let top={p:0};
     M.forEach((r,i)=>{const s=r.reduce((a,b)=>a+b,0);r.forEach((v,j)=>{if(i!==j){const p=v/s;if(p>top.p)top={p,i,j,v,s}}})});
     let h='<div></div>'+SH.map(s=>`<div class="ch">${s}</div>`).join('');
     M.forEach((r,i)=>{const s=r.reduce((a,b)=>a+b,0);h+=`<div class="rh">${NAMES[i]}</div>`;
-      r.forEach((v,j)=>{const p=v/s;h+=`<div class="k ${i===j?'dg':''} ${top.i===i&&top.j===j?'top':''} ${p<.04?'faint':''}" data-i="${i}" data-j="${j}" data-v="${v}" data-s="${s}" style="background:color-mix(in srgb, ${col} ${Math.round(6+p*94)}%, #1c1611)">${Math.round(p*100)}%</div>`})});
+      r.forEach((v,j)=>{const p=v/s;h+=`<div class="k ${i===j?'dg':''} ${top.i===i&&top.j===j?'top':''} ${p<.04?'faint':''}" data-i="${i}" data-j="${j}" data-v="${v}" data-s="${s}" style="background:color-mix(in srgb, ${col} ${Math.round(6+p*94)}%, #ffffff)">${Math.round(p*100)}%</div>`})});
     cm.innerHTML=h;
     const diag=M.map((r,i)=>r[i]/r.reduce((a,b)=>a+b,0));
     const best=diag.indexOf(Math.max(...diag)),worst=diag.indexOf(Math.min(...diag));
@@ -1274,7 +1305,8 @@ function fitAll(){
     if(narrow)return;
     const was=s.className;
     s.classList.add('measure');
-    const limit=hud.getBoundingClientRect().top-12;
+    const how=$('.how',s);
+    const limit=Math.min(hud.getBoundingClientRect().top-12,how?how.getBoundingClientRect().top-10:Infinity);
     for(let pass=0;pass<3;pass++){
       const top=b.getBoundingClientRect().top;
       let worst=0;
@@ -1437,7 +1469,7 @@ const ENTER={
   s10:['slam',  false, '.hrow,.hbar',      'left'],
   s16:['zoom',  true,  '.wcard',           'jelly']
 };
-function countUp(el,ms){
+function tweenNum(el,ms){
   const raw=el.textContent.trim(),m=raw.match(/^([+]?)([\d,]*\.?\d+)(.*)$/);if(!m)return;
   const dec=(m[2].split('.')[1]||'').length,comma=m[2].includes(','),to=parseFloat(m[2].replace(/,/g,'')),t0=performance.now();
   (function step(t){
@@ -1447,12 +1479,28 @@ function countUp(el,ms){
     if(k<1)requestAnimationFrame(step);else el.textContent=raw;
   })(t0);
 }
+/* every number gets a highlighter marker behind it (a soft colour, so the text stays easy to read) and its own entry move */
+const HLC=['rgba(242,183,5,.5)','rgba(216,41,31,.26)','rgba(31,157,85,.3)','rgba(31,111,214,.26)'];
+const HL_MODEL={s6:0,s7:3,s8:2};   /* BiGRU yellow, BiLSTM blue, BERT green */
+const FXLIST=['zoom','flipX','jelly','slam','spin','drop','left','track','flipY','rise','right'];
+const NUMSEL='.big,.rank,.v,#pf,#pa,#pdelta b';
 function enterFx(id){
   const s=slides.find(x=>x.id===id),c=ENTER[id];
-  if(!s||!c||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-  const mains=$$('.big,.rank',s);if(!mains.length){const e=$('h2 em',s);if(e)mains.push(e)}
-  mains.forEach((e,i)=>{e.animate(FX[c[0]],{duration:900,delay:i*120,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});if(c[1])countUp(e,1100)});
-  $$(c[2],s).forEach((e,i)=>e.animate(FX[c[3]],{duration:700,delay:200+i*90,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
+  if(!s||!c)return;
+  const calm=matchMedia('(prefers-reduced-motion:reduce)').matches,si=slides.indexOf(s);
+  const nums=$$(NUMSEL,s);if(!nums.some(e=>e.classList.contains('big'))){const e=$('h2 em',s);if(e)nums.unshift(e)}
+  nums.forEach((e,i)=>{
+    if(!e.classList.contains('rank')&&e.tagName!=='EM'){
+      e.classList.add('hl');
+      e.style.setProperty('--hlc',HLC[id in HL_MODEL?HL_MODEL[id]:(i+si)%HLC.length]);
+    }
+    if(calm)return;
+    const fx=FX[i===0?c[0]:FXLIST[(i*3+si)%FXLIST.length]];
+    e.animate(fx,{duration:900,delay:i*90,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});
+    if(e.classList.contains('hl'))e.animate([{backgroundSize:'0% 100%'},{backgroundSize:'100% 100%'}],{duration:700,delay:350+i*90,easing:'ease-out',fill:'backwards'});
+    if(c[1]&&i===0&&!e.hasAttribute('data-count'))tweenNum(e,1100);
+  });
+  if(!calm)$$(c[2],s).forEach((e,i)=>e.animate(FX[c[3]],{duration:700,delay:200+i*90,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
 }
 
 /* ---------- enter hooks ---------- */

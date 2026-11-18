@@ -46,7 +46,7 @@ const ENTER={
   s10:['slam',  false, '.hrow,.hbar',      'left'],
   s16:['zoom',  true,  '.wcard',           'jelly']
 };
-function countUp(el,ms){
+function tweenNum(el,ms){
   const raw=el.textContent.trim(),m=raw.match(/^([+]?)([\d,]*\.?\d+)(.*)$/);if(!m)return;
   const dec=(m[2].split('.')[1]||'').length,comma=m[2].includes(','),to=parseFloat(m[2].replace(/,/g,'')),t0=performance.now();
   (function step(t){
@@ -56,10 +56,26 @@ function countUp(el,ms){
     if(k<1)requestAnimationFrame(step);else el.textContent=raw;
   })(t0);
 }
+/* every number gets a highlighter marker behind it (a soft colour, so the text stays easy to read) and its own entry move */
+const HLC=['rgba(242,183,5,.5)','rgba(216,41,31,.26)','rgba(31,157,85,.3)','rgba(31,111,214,.26)'];
+const HL_MODEL={s6:0,s7:3,s8:2};   /* BiGRU yellow, BiLSTM blue, BERT green */
+const FXLIST=['zoom','flipX','jelly','slam','spin','drop','left','track','flipY','rise','right'];
+const NUMSEL='.big,.rank,.v,#pf,#pa,#pdelta b';
 function enterFx(id){
   const s=slides.find(x=>x.id===id),c=ENTER[id];
-  if(!s||!c||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-  const mains=$$('.big,.rank',s);if(!mains.length){const e=$('h2 em',s);if(e)mains.push(e)}
-  mains.forEach((e,i)=>{e.animate(FX[c[0]],{duration:900,delay:i*120,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});if(c[1])countUp(e,1100)});
-  $$(c[2],s).forEach((e,i)=>e.animate(FX[c[3]],{duration:700,delay:200+i*90,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
+  if(!s||!c)return;
+  const calm=matchMedia('(prefers-reduced-motion:reduce)').matches,si=slides.indexOf(s);
+  const nums=$$(NUMSEL,s);if(!nums.some(e=>e.classList.contains('big'))){const e=$('h2 em',s);if(e)nums.unshift(e)}
+  nums.forEach((e,i)=>{
+    if(!e.classList.contains('rank')&&e.tagName!=='EM'){
+      e.classList.add('hl');
+      e.style.setProperty('--hlc',HLC[id in HL_MODEL?HL_MODEL[id]:(i+si)%HLC.length]);
+    }
+    if(calm)return;
+    const fx=FX[i===0?c[0]:FXLIST[(i*3+si)%FXLIST.length]];
+    e.animate(fx,{duration:900,delay:i*90,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});
+    if(e.classList.contains('hl'))e.animate([{backgroundSize:'0% 100%'},{backgroundSize:'100% 100%'}],{duration:700,delay:350+i*90,easing:'ease-out',fill:'backwards'});
+    if(c[1]&&i===0&&!e.hasAttribute('data-count'))tweenNum(e,1100);
+  });
+  if(!calm)$$(c[2],s).forEach((e,i)=>e.animate(FX[c[3]],{duration:700,delay:200+i*90,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
 }

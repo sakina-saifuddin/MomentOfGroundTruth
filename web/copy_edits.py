@@ -133,7 +133,37 @@ EDITS: list[tuple[str, str]] = [
     ("if(n===9&&window._barsReset)window._barsReset();", "if(s.id==='s10'&&window._barsReset)window._barsReset();"),
     ("for(let i=0;i<16;i++){const g=new THREE.Group();", "for(let i=0;i<24;i++){const g=new THREE.Group();"),
     ("TARGET 12:00 · LIMIT 13:00", "TARGET 10:00 · LIMIT 15:00"),
+
+    # ---------- the white theme: the heat maps fade from white to the model colour (yellow, blue, green) instead of from dark
+    ("${id==='gru'?'#e3a63a':id==='lstm'?'#5fa8ad':'#e8493f'} ${Math.round(18+a*72)}%, #1c1611)",
+     "${id==='gru'?'#f2b705':id==='lstm'?'#1f6fd6':'#1f9d55'} ${Math.round(18+a*72)}%, #ffffff)"),
+    ("col=MCOL[id]==='var(--bert)'?'#e8493f':id==='gru'?'#e3a63a':'#5fa8ad';",
+     "col=MCOL[id]==='var(--bert)'?'#1f9d55':id==='gru'?'#f2b705':'#1f6fd6';"),
+    ("${Math.round(6+p*94)}%, #1c1611)", "${Math.round(6+p*94)}%, #ffffff)"),
 ]
+
+# one plain sentence on each slide that says how to read the numbers (slide id -> sentence). build_web.py adds it
+# at the bottom of the slide, so the audience can follow the numbers without anyone having to explain the axes.
+EXPLAIN = {
+    "s2": "Each number is people hurt or killed in one real accident. This is why the cause of every failure has to be found.",
+    "s3": "Each bar is one cause. The longer the bar, the more reports have that cause. The red bar is the most common and the yellow bar is the rarest.",
+    "s4": "These are the eight answers the model can give. Every report has exactly one of them.",
+    "s5": "The long bar is the reports the model learns from. The two short bars are the reports we hold back to tune it and to grade it at the end.",
+    "e1": "A bigger weight means the model is punished more for getting that cause wrong, so it cannot just ignore the rare ones.",
+    "e2": "Solid is real reports and striped is the synthetic reports we added. The dashed line is our goal of 300 reports for each cause.",
+    "s6": "Macro-F1 is the main score, from 0 to 1, and higher is better. It counts all eight causes equally. Accuracy is how many reports the model got right.",
+    "s7": "The bright numbers are Experiment 1 and the faded ones are Experiment 2. Attention means the model looks harder at the important words.",
+    "s8": "Frozen means we do not change BERT at all. We only train the small layer on top, so there are far fewer numbers to learn.",
+    "s9": "Pooling is how the model squeezes a whole report into one set of numbers. The same model scored much higher when it averaged every word.",
+    "s10": "A taller bar is a better score. Solid bars are Experiment 1 and striped bars are Experiment 2. The number on top of each bar is its score.",
+    "s16": "Green is frozen BERT. In the first chart a shorter bar is better, because it means a smaller drop. In the other two a longer bar is better.",
+    "s11": "Each bar is the score for one cause. A longer bar means the model is better at that cause.",
+    "s12": "Each row is the true cause and each column is what the model said. A strong colour on the diagonal means it got that cause right.",
+}
+
+
+def explain_html(slide_id: str) -> str:
+    return f'<p class="how"><b>How to read this</b>{EXPLAIN[slide_id]}</p>'
 
 # slide order, as the story is told (ids are the section ids in the deck). The demo slide (s14) is not in the
 # website; the backup slides come after the summary.

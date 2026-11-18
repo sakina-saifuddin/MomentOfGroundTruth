@@ -12,9 +12,11 @@ body{background:#fff}
 #bg{display:none}
 /* a faint red glow drifts across the white, and a dashed red line runs along the bottom like oil in a pipeline */
 #shade{overflow:hidden;background:#fff}
+/* the glow also beats slowly, like a pulse in the pipeline: a soft lub-dub every two seconds, far too faint to compete with the text */
 #shade::before{content:"";position:absolute;inset:-30%;background:
-  radial-gradient(34% 34% at 28% 30%,rgba(216,41,31,.07),transparent 70%),
-  radial-gradient(30% 30% at 76% 70%,rgba(242,183,5,.08),transparent 70%);animation:redDrift 18s ease-in-out infinite alternate}
+  radial-gradient(40% 40% at 28% 32%,rgba(216,41,31,.13),transparent 70%),
+  radial-gradient(34% 34% at 76% 70%,rgba(242,183,5,.13),transparent 70%);animation:redDrift 18s ease-in-out infinite alternate,beat 2s ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:.55}10%{opacity:1}22%{opacity:.65}34%{opacity:.92}55%{opacity:.55}}
 #shade::after{content:"";position:absolute;left:0;right:0;bottom:3.6rem;height:.5rem;
   background:repeating-linear-gradient(90deg,rgba(216,41,31,.3) 0 2.2rem,transparent 2.2rem 4.4rem);
   animation:redFlow 3.2s linear infinite}
@@ -63,3 +65,32 @@ h2 em{color:var(--stamp)}
 .paper,.cc,.photo .frame{box-shadow:0 .8rem 1.8rem rgba(23,18,15,.22)}
 .s-title .stampwrap .stamp{filter:drop-shadow(0 .8rem 1.2rem rgba(23,18,15,.3))}
 .s-title .stampwrap::before,.s-title .stampwrap::after{border-color:rgba(216,41,31,.55)}
+
+/* ---------- colour instead of black: neutral bars are a soft red, the important ones are the strong colours ---------- */
+.brow .fill,.hbar .real,.sw2.solid,.xr .f,.s-exp .key{background:#eba9a1}
+.brow:nth-child(1) .fill{background:var(--stamp)}
+.brow:last-child .fill{background:var(--gru)}
+.xr.hot .f{background:var(--stamp)}
+.sb-train{background:#f08a24;color:#fff}
+.sb-val{background:#f6c6bf;color:var(--text)}
+.sb-test{background:var(--stamp);color:#fff}
+.seg button[aria-pressed="true"]{background:var(--stamp);color:#fff}
+.lg.t,.mk i.t{background:var(--gru);color:var(--text)}
+.tag.t{background:var(--gru);color:var(--text);border-color:var(--gru)}
+.pc .ghost,.rare .meter u{background:var(--stamp)}
+.hm .c.hi::after{border-color:var(--stamp)}
+.cm .k{color:var(--text)}
+.cm .k.dg{box-shadow:inset 0 0 0 2px rgba(23,18,15,.75)}
+.cm .k.faint{color:rgba(23,18,15,.4)}
+.hm .c{color:var(--text)}
+
+/* ---------- a highlighter marker behind every number ---------- */
+.hl{background-image:linear-gradient(transparent 38%,var(--hlc,rgba(242,183,5,.5)) 38%,var(--hlc,rgba(242,183,5,.5)) 88%,transparent 88%);
+  background-repeat:no-repeat;background-size:100% 100%;border-radius:.15em;padding:0 .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.v.hl{width:max-content;justify-self:end;margin-left:auto}
+.big.hl{display:inline-block}
+
+/* ---------- the plain-language line at the bottom of each slide ---------- */
+.how{margin-top:.6rem;flex:none;font-size:.95rem;line-height:1.4;color:var(--text);max-width:62rem;padding:.55rem .9rem;
+  background:linear-gradient(90deg,rgba(242,183,5,.22),rgba(242,183,5,.04));border-left:4px solid var(--stamp)}
+.how b{display:block;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);margin-bottom:.15rem}

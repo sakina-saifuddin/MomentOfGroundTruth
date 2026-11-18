@@ -8,7 +8,8 @@ function fitAll(){
     if(narrow)return;
     const was=s.className;
     s.classList.add('measure');
-    const limit=hud.getBoundingClientRect().top-12;
+    const how=$('.how',s);
+    const limit=Math.min(hud.getBoundingClientRect().top-12,how?how.getBoundingClientRect().top-10:Infinity);
     for(let pass=0;pass<3;pass++){
       const top=b.getBoundingClientRect().top;
       let worst=0;
